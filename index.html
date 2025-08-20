@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF--8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Operational Excellence To-Do App</title>
 
@@ -132,6 +132,19 @@
             </select>
           </div>
           <div class="md:col-span-2">
+            <label
+              for="taskAssignedBy"
+              class="block text-sm font-medium text-slate-600 mb-1"
+              >Assigned By</label
+            >
+            <input
+              id="taskAssignedBy"
+              type="text"
+              placeholder="e.g., Joseph"
+              class="w-full p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+            />
+          </div>
+          <div class="md:col-span-2">
             <button
               onclick="addTask()"
               class="w-full bg-indigo-600 text-white font-semibold p-3 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200"
@@ -148,11 +161,17 @@
         </h2>
         <div
           id="dashboard"
-          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
         >
           <div class="bg-white p-5 rounded-xl shadow-sm">
             <h3 class="text-sm font-medium text-slate-500">Total Tasks</h3>
             <p id="totalTasks" class="text-3xl font-bold text-slate-900">0</p>
+          </div>
+          <div class="bg-white p-5 rounded-xl shadow-sm">
+            <h3 class="text-sm font-medium text-slate-500">In Progress</h3>
+            <p id="inProgressTasks" class="text-3xl font-bold text-slate-900">
+              0
+            </p>
           </div>
           <div class="bg-white p-5 rounded-xl shadow-sm">
             <h3 class="text-sm font-medium text-slate-500">Completed</h3>
@@ -215,6 +234,8 @@
         const priority = document.getElementById("taskPriority").value;
         const category = document.getElementById("taskCategory").value;
         const dueDate = document.getElementById("taskDueDate").value;
+        // Get value from new field
+        const assignedBy = document.getElementById("taskAssignedBy").value;
 
         if (!title || !dueDate) {
           alert("Title and Due Date are required!");
@@ -229,6 +250,8 @@
             priority,
             category,
             dueDate,
+            // Add new field to Firestore
+            assignedBy,
             status: "Not Started",
             createdAt: serverTimestamp(),
           });
@@ -236,6 +259,8 @@
           document.getElementById("taskDescription").value = "";
           document.getElementById("taskDeliverable").value = "";
           document.getElementById("taskDueDate").value = "";
+          // Clear the new field
+          document.getElementById("taskAssignedBy").value = "";
           setReminder(dueDate, title);
         } catch (error) {
           console.error("Error adding task:", error);
@@ -278,6 +303,8 @@
         taskList.innerHTML = ""; // Clear existing tasks
         let totalTasks = 0;
         let completedTasks = 0;
+        // New counter for in-progress tasks
+        let inProgressTasks = 0;
 
         try {
           const q = query(
@@ -293,55 +320,62 @@
           snapshot.forEach((doc) => {
             const task = doc.data();
             totalTasks++;
+            // Increment counters based on status
             if (task.status === "Completed") completedTasks++;
+            if (task.status === "In Progress") inProgressTasks++;
 
             const taskDiv = document.createElement("div");
             taskDiv.className =
               "p-4 border border-slate-200 rounded-lg transition-shadow hover:shadow-md";
             taskDiv.innerHTML = `
-              <div class="flex flex-col sm:flex-row justify-between sm:items-center">
-                <div class="flex-grow">
-                  <div class="flex items-center mb-2">
-                    ${getPriorityBadge(task.priority)}
-                    <h3 class="font-bold text-lg text-slate-800">${
-                      task.title
-                    }</h3>
-                  </div>
-                  <p class="text-slate-600 text-sm mb-2">${
-                    task.description || "No description"
-                  }</p>
-                  <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-500">
-                      <p><strong>Deliverable:</strong> ${
-                        task.deliverable || "None"
-                      }</p>
-                      <p><strong>Category:</strong> ${task.category}</p>
-                      <p><strong>Due:</strong> ${luxon.DateTime.fromISO(
-                        task.dueDate
-                      ).toLocaleString(luxon.DateTime.DATETIME_SHORT)}</p>
-                  </div>
-                </div>
-                <div class="flex items-center space-x-2 mt-4 sm:mt-0">
-                   <select onchange="updateStatus('${
-                     doc.id
-                   }', this.value)" class="w-full sm:w-auto text-sm p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-indigo-500 transition">
-                      <option value="Not Started" ${
-                        task.status === "Not Started" ? "selected" : ""
-                      }>Not Started</option>
-                      <option value="In Progress" ${
-                        task.status === "In Progress" ? "selected" : ""
-                      }>In Progress</option>
-                      <option value="Completed" ${
-                        task.status === "Completed" ? "selected" : ""
-                      }>Completed</option>
-                   </select>
-                   <button onclick="deleteTask('${
-                     doc.id
-                   }')" class="text-slate-500 hover:text-red-600 p-2 rounded-md transition-colors">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
-                   </button>
-                </div>
-              </div>
-            `;
+                      <div class="flex flex-col sm:flex-row justify-between sm:items-center">
+                        <div class="flex-grow">
+                          <div class="flex items-center mb-2">
+                            ${getPriorityBadge(task.priority)}
+                            <h3 class="font-bold text-lg text-slate-800">${
+                              task.title
+                            }</h3>
+                          </div>
+                          <p class="text-slate-600 text-sm mb-2">${
+                            task.description || "No description"
+                          }</p>
+                          <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-500">
+                              <p><strong>Deliverable:</strong> ${
+                                task.deliverable || "None"
+                              }</p>
+                              <p><strong>Category:</strong> ${task.category}</p>
+                              <p><strong>Assigned By:</strong> ${
+                                task.assignedBy || "N/A"
+                              }</p>
+                              <p><strong>Due:</strong> ${luxon.DateTime.fromISO(
+                                task.dueDate
+                              ).toLocaleString(
+                                luxon.DateTime.DATETIME_SHORT
+                              )}</p>
+                          </div>
+                        </div>
+                        <div class="flex items-center space-x-2 mt-4 sm:mt-0">
+                           <select onchange="updateStatus('${
+                             doc.id
+                           }', this.value)" class="w-full sm:w-auto text-sm p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-indigo-500 transition">
+                              <option value="Not Started" ${
+                                task.status === "Not Started" ? "selected" : ""
+                              }>Not Started</option>
+                              <option value="In Progress" ${
+                                task.status === "In Progress" ? "selected" : ""
+                              }>In Progress</option>
+                              <option value="Completed" ${
+                                task.status === "Completed" ? "selected" : ""
+                              }>Completed</option>
+                           </select>
+                           <button onclick="deleteTask('${
+                             doc.id
+                           }')" class="text-slate-500 hover:text-red-600 p-2 rounded-md transition-colors">
+                              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                           </button>
+                        </div>
+                      </div>
+                    `;
             taskList.appendChild(taskDiv);
           });
 
@@ -349,6 +383,9 @@
           document.getElementById("totalTasks").textContent = totalTasks;
           document.getElementById("completedTasks").textContent =
             completedTasks;
+          // Update new In Progress card
+          document.getElementById("inProgressTasks").textContent =
+            inProgressTasks;
           document.getElementById("completionRate").textContent = totalTasks
             ? ((completedTasks / totalTasks) * 100).toFixed(1) + "%"
             : "0%";
