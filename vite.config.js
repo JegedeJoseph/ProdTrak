@@ -1,14 +1,16 @@
-import { resolve } from "path";
+import { defineConfig } from "vite";
 
-export default {
-  root: resolve(__dirname, "src"),
+export default defineConfig({
+  // This tells Vite to use the current folder as the root
+  root: "./",
   build: {
-    outDir: "../dist",
+    // This will create the 'dist' folder in your project's root
+    outDir: "dist",
   },
   server: {
     port: 8080,
   },
-  // Optional: Silence Sass deprecation warnings. See note below.
+  // Your other CSS settings can remain the same
   css: {
     preprocessorOptions: {
       scss: {
@@ -21,4 +23,4 @@ export default {
       },
     },
   },
-};
+});
