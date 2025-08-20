@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Operational Excellence To-Do App</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <script
+      type="module"
+      src="https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js"
+    ></script>
+    <script
+      type="module"
+      src="https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js"
+    ></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/luxon/3.4.0/luxon.min.js"></script>
+
+    <style>
+      body {
+        font-family: "Inter", sans-serif;
+      }
+      /* Custom focus ring color */
+      .focus\:ring-indigo-500:focus {
+        --tw-ring-opacity: 1;
+        --tw-ring-color: rgba(99, 102, 241, var(--tw-ring-opacity));
+        box-shadow: 0 0 0 2px var(--tw-ring-color);
+      }
+    </style>
+  </head>
+  <body class="bg-slate-100 text-slate-800">
+    <div class="container mx-auto max-w-5xl p-4 sm:p-6 lg:p-8">
+      <div class="text-center mb-10">
+        <h1 class="text-4xl sm:text-5xl font-extrabold text-slate-900 mb-2">
+          To-Do App!
+        </h1>
+        <p class="text-slate-500">
+          Stay organized and boost your productivity.
+        </p>
+      </div>
+
+      <div class="bg-white p-6 rounded-xl shadow-sm mb-8">
+        <h2 class="text-2xl font-bold text-slate-800 mb-5">Add New Task</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+          <div class="md:col-span-2">
+            <label
+              for="taskTitle"
+              class="block text-sm font-medium text-slate-600 mb-1"
+              >Title</label
+            >
+            <input
+              id="taskTitle"
+              type="text"
+              placeholder="e.g., Finalize quarterly report"
+              class="w-full p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+            />
+          </div>
+          <div class="md:col-span-2">
+            <label
+              for="taskDescription"
+              class="block text-sm font-medium text-slate-600 mb-1"
+              >Description</label
+            >
+            <textarea
+              id="taskDescription"
+              placeholder="Add more details about the task..."
+              class="w-full p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+              rows="3"
+            ></textarea>
+          </div>
+          <div>
+            <label
+              for="taskDeliverable"
+              class="block text-sm font-medium text-slate-600 mb-1"
+              >Deliverable</label
+            >
+            <input
+              id="taskDeliverable"
+              type="text"
+              placeholder="e.g., PDF Report"
+              class="w-full p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+            />
+          </div>
+          <div>
+            <label
+              for="taskDueDate"
+              class="block text-sm font-medium text-slate-600 mb-1"
+              >Due Date</label
+            >
+            <input
+              id="taskDueDate"
+              type="datetime-local"
+              class="w-full p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+            />
+          </div>
+          <div>
+            <label
+              for="taskPriority"
+              class="block text-sm font-medium text-slate-600 mb-1"
+              >Priority</label
+            >
+            <select
+              id="taskPriority"
+              class="w-full p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+            >
+              <option value="Low">Low</option>
+              <option value="Medium">Medium</option>
+              <option value="High">High</option>
+            </select>
+          </div>
+          <div>
+            <label
+              for="taskCategory"
+              class="block text-sm font-medium text-slate-600 mb-1"
+              >Category</label
+            >
+            <select
+              id="taskCategory"
+              class="w-full p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+            >
+              <option value="Work">Work</option>
+              <option value="Personal">Personal</option>
+              <option value="Study">Study</option>
+            </select>
+          </div>
+          <div class="md:col-span-2">
+            <button
+              onclick="addTask()"
+              class="w-full bg-indigo-600 text-white font-semibold p-3 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200"
+            >
+              Add Task
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="mb-8">
+        <h2 class="text-2xl font-bold text-slate-800 mb-4">
+          Progress Dashboard
+        </h2>
+        <div
+          id="dashboard"
+          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+        >
+          <div class="bg-white p-5 rounded-xl shadow-sm">
+            <h3 class="text-sm font-medium text-slate-500">Total Tasks</h3>
+            <p id="totalTasks" class="text-3xl font-bold text-slate-900">0</p>
+          </div>
+          <div class="bg-white p-5 rounded-xl shadow-sm">
+            <h3 class="text-sm font-medium text-slate-500">Completed</h3>
+            <p id="completedTasks" class="text-3xl font-bold text-slate-900">
+              0
+            </p>
+          </div>
+          <div class="bg-white p-5 rounded-xl shadow-sm">
+            <h3 class="text-sm font-medium text-slate-500">Completion Rate</h3>
+            <p id="completionRate" class="text-3xl font-bold text-slate-900">
+              0%
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-white p-6 rounded-xl shadow-sm">
+        <h2 class="text-2xl font-bold text-slate-800 mb-4">My Task List</h2>
+        <div id="taskList" class="space-y-4"></div>
+      </div>
+    </div>
+
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+      import {
+        getFirestore,
+        collection,
+        addDoc,
+        getDocs,
+        query,
+        orderBy,
+        updateDoc,
+        doc,
+        deleteDoc,
+        serverTimestamp,
+        onSnapshot,
+      } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+      // --- Your Firebase Config ---
+      const firebaseConfig = {
+        apiKey: "AIzaSyAg-SOTza5s7RPXTARsUa1DqU0UTG1MVOg",
+        authDomain: "todo-app-f0b27.firebaseapp.com",
+        projectId: "todo-app-f0b27",
+        storageBucket: "todo-app-f0b27.firebasestorage.app",
+        messagingSenderId: "193322568260",
+        appId: "1:193322568260:web:12356785e93cf222f18a11",
+        measurementId: "G-CG33WLLSMJ",
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+
+      Notification.requestPermission();
+
+      // --- Add Task Function ---
+      window.addTask = async function addTask() {
+        const title = document.getElementById("taskTitle").value;
+        const description = document.getElementById("taskDescription").value;
+        const deliverable = document.getElementById("taskDeliverable").value;
+        const priority = document.getElementById("taskPriority").value;
+        const category = document.getElementById("taskCategory").value;
+        const dueDate = document.getElementById("taskDueDate").value;
+
+        if (!title || !dueDate) {
+          alert("Title and Due Date are required!");
+          return;
+        }
+
+        try {
+          await addDoc(collection(db, "tasks"), {
+            title,
+            description,
+            deliverable,
+            priority,
+            category,
+            dueDate,
+            status: "Not Started",
+            createdAt: serverTimestamp(),
+          });
+          document.getElementById("taskTitle").value = "";
+          document.getElementById("taskDescription").value = "";
+          document.getElementById("taskDeliverable").value = "";
+          document.getElementById("taskDueDate").value = "";
+          setReminder(dueDate, title);
+        } catch (error) {
+          console.error("Error adding task:", error);
+          alert("Failed to add task. Check console for details.");
+        }
+      };
+
+      // --- Set Reminder Function ---
+      function setReminder(dueDate, title) {
+        const DateTime = luxon.DateTime;
+        const due = DateTime.fromISO(dueDate);
+        const now = DateTime.now();
+        const diff = due.diff(now, "milliseconds").milliseconds;
+        if (diff > 0) {
+          setTimeout(() => {
+            new Notification(`Reminder: ${title}`, {
+              body: `Task "${title}" is due soon!`,
+            });
+          }, diff - 60000); // Remind 1 minute before
+        }
+      }
+
+      // --- Priority Badge Helper ---
+      function getPriorityBadge(priority) {
+        switch (priority) {
+          case "High":
+            return `<span class="text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full bg-red-100 text-red-800">High</span>`;
+          case "Medium":
+            return `<span class="text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full bg-yellow-100 text-yellow-800">Medium</span>`;
+          case "Low":
+            return `<span class="text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full bg-green-100 text-green-800">Low</span>`;
+          default:
+            return "";
+        }
+      }
+
+      // --- Load Tasks Function ---
+      async function loadTasks() {
+        const taskList = document.getElementById("taskList");
+        taskList.innerHTML = ""; // Clear existing tasks
+        let totalTasks = 0;
+        let completedTasks = 0;
+
+        try {
+          const q = query(
+            collection(db, "tasks"),
+            orderBy("createdAt", "desc")
+          );
+          const snapshot = await getDocs(q);
+
+          if (snapshot.empty) {
+            taskList.innerHTML = `<p class="text-slate-500 text-center py-4">No tasks yet. Add one above to get started!</p>`;
+          }
+
+          snapshot.forEach((doc) => {
+            const task = doc.data();
+            totalTasks++;
+            if (task.status === "Completed") completedTasks++;
+
+            const taskDiv = document.createElement("div");
+            taskDiv.className =
+              "p-4 border border-slate-200 rounded-lg transition-shadow hover:shadow-md";
+            taskDiv.innerHTML = `
+              <div class="flex flex-col sm:flex-row justify-between sm:items-center">
+                <div class="flex-grow">
+                  <div class="flex items-center mb-2">
+                    ${getPriorityBadge(task.priority)}
+                    <h3 class="font-bold text-lg text-slate-800">${
+                      task.title
+                    }</h3>
+                  </div>
+                  <p class="text-slate-600 text-sm mb-2">${
+                    task.description || "No description"
+                  }</p>
+                  <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-500">
+                      <p><strong>Deliverable:</strong> ${
+                        task.deliverable || "None"
+                      }</p>
+                      <p><strong>Category:</strong> ${task.category}</p>
+                      <p><strong>Due:</strong> ${luxon.DateTime.fromISO(
+                        task.dueDate
+                      ).toLocaleString(luxon.DateTime.DATETIME_SHORT)}</p>
+                  </div>
+                </div>
+                <div class="flex items-center space-x-2 mt-4 sm:mt-0">
+                   <select onchange="updateStatus('${
+                     doc.id
+                   }', this.value)" class="w-full sm:w-auto text-sm p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-indigo-500 transition">
+                      <option value="Not Started" ${
+                        task.status === "Not Started" ? "selected" : ""
+                      }>Not Started</option>
+                      <option value="In Progress" ${
+                        task.status === "In Progress" ? "selected" : ""
+                      }>In Progress</option>
+                      <option value="Completed" ${
+                        task.status === "Completed" ? "selected" : ""
+                      }>Completed</option>
+                   </select>
+                   <button onclick="deleteTask('${
+                     doc.id
+                   }')" class="text-slate-500 hover:text-red-600 p-2 rounded-md transition-colors">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                   </button>
+                </div>
+              </div>
+            `;
+            taskList.appendChild(taskDiv);
+          });
+
+          // Update Dashboard
+          document.getElementById("totalTasks").textContent = totalTasks;
+          document.getElementById("completedTasks").textContent =
+            completedTasks;
+          document.getElementById("completionRate").textContent = totalTasks
+            ? ((completedTasks / totalTasks) * 100).toFixed(1) + "%"
+            : "0%";
+        } catch (error) {
+          console.error("Error loading tasks:", error);
+        }
+      }
+
+      // --- Update Task Status ---
+      window.updateStatus = async function updateStatus(taskId, status) {
+        try {
+          await updateDoc(doc(db, "tasks", taskId), { status });
+        } catch (error) {
+          console.error("Error updating status:", error);
+        }
+      };
+
+      // --- Delete Task ---
+      window.deleteTask = async function deleteTask(taskId) {
+        if (!confirm("Are you sure you want to delete this task?")) return;
+        try {
+          await deleteDoc(doc(db, "tasks", taskId));
+        } catch (error) {
+          console.error("Error deleting task:", error);
+        }
+      };
+
+      // --- Real-time Listener ---
+      onSnapshot(
+        query(collection(db, "tasks"), orderBy("createdAt", "desc")),
+        (snapshot) => {
+          loadTasks();
+        }
+      );
+    </script>
+  </body>
+</html>
