@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
+    <meta charset="UTF--8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Operational Excellence To-Do App</title>
+    <link rel="icon" type="image/png" href="/assets/opex_favicon-H69HTcO8.png" />
 
     <script src="https://cdn.tailwindcss.com"></script>
 
@@ -35,7 +36,7 @@
         box-shadow: 0 0 0 2px var(--tw-ring-color);
       }
     </style>
-    <script type="module" crossorigin src="/assets/index-BcZyzVQZ.js"></script>
+    <script type="module" crossorigin src="/assets/index-kdJta8F8.js"></script>
   </head>
   <body class="bg-slate-100 text-slate-800">
     <div class="container mx-auto max-w-5xl p-4 sm:p-6 lg:p-8">
@@ -133,6 +134,19 @@
             </select>
           </div>
           <div class="md:col-span-2">
+            <label
+              for="taskAssignedBy"
+              class="block text-sm font-medium text-slate-600 mb-1"
+              >Assigned By</label
+            >
+            <input
+              id="taskAssignedBy"
+              type="text"
+              placeholder="e.g., Joseph"
+              class="w-full p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
+            />
+          </div>
+          <div class="md:col-span-2">
             <button
               onclick="addTask()"
               class="w-full bg-indigo-600 text-white font-semibold p-3 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200"
@@ -149,11 +163,17 @@
         </h2>
         <div
           id="dashboard"
-          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
         >
           <div class="bg-white p-5 rounded-xl shadow-sm">
             <h3 class="text-sm font-medium text-slate-500">Total Tasks</h3>
             <p id="totalTasks" class="text-3xl font-bold text-slate-900">0</p>
+          </div>
+          <div class="bg-white p-5 rounded-xl shadow-sm">
+            <h3 class="text-sm font-medium text-slate-500">In Progress</h3>
+            <p id="inProgressTasks" class="text-3xl font-bold text-slate-900">
+              0
+            </p>
           </div>
           <div class="bg-white p-5 rounded-xl shadow-sm">
             <h3 class="text-sm font-medium text-slate-500">Completed</h3>
