@@ -1,13 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF--8" />
+    <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Operational Excellence To-Do App</title>
     <link rel="icon" type="image/png" href="/opex_favicon.png" />
 
-    <script src="https://cdn.tailwindcss.com"></script>
-
+    <link href="/dist/output.css" rel="stylesheet" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -38,19 +37,72 @@
     </style>
   </head>
   <body class="bg-slate-100 text-slate-800">
-    <div class="container mx-auto max-w-5xl p-4 sm:p-6 lg:p-8">
-      <div class="text-center mb-10">
-        <h1 class="text-4xl sm:text-5xl font-extrabold text-slate-900 mb-2">
-          To-Do App!
-        </h1>
-        <p class="text-slate-500">
-          Stay organized and boost your productivity.
-        </p>
+  <div id="auth-container" class="container mx-auto max-w-md p-4 sm:p-6 lg:p-8 mt-10">
+    <div class="bg-white p-8 rounded-xl shadow-md">
+      <h1 class="text-3xl font-bold text-center text-slate-900 mb-6">
+        To-Do App Login
+      </h1>
+      <div class="space-y-4">
+         <div>
+        <button id="googleLoginButton"
+          class="w-full flex items-center justify-center gap-2 bg-white border border-slate-300 text-slate-700 font-semibold p-3 rounded-md hover:bg-slate-50 transition">
+          <svg class="w-5 h-5" viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8c-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4C12.955 4 4 12.955 4 24s8.955 20 20 20s20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"></path><path fill="#FF3D00" d="M6.306 14.691c-1.313 2.525-2.074 5.433-2.074 8.529c0 3.096.761 6.004 2.074 8.529l-5.657 5.657C.623 34.046 0 29.268 0 24c0-5.268.623-10.046 2.649-14.341l5.657 5.032z"></path><path fill="#4CAF50" d="M24 48c5.268 0 10.046-.623 14.341-2.649l-5.657-5.657C30.413 41.205 27.426 42 24 42c-4.715 0-8.892-2.12-11.458-5.322l-5.657 5.657C10.032 45.368 16.689 48 24 48z"></path><path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303c-.792 2.237-2.231 4.16-4.082 5.574l5.657 5.657C39.997 35.96 44 30.605 44 24c0-1.341-.138-2.65-.389-3.917z"></path></svg>
+          Sign in with Google
+        </button>
       </div>
 
-      <div class="bg-white p-6 rounded-xl shadow-sm mb-8">
-        <h2 class="text-2xl font-bold text-slate-800 mb-5">Add New Task</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+      <div class="relative">
+        <div class="absolute inset-0 flex items-center">
+          <div class="w-full border-t border-slate-300"></div>
+        </div>
+        <div class="relative flex justify-center text-sm">
+          <span class="bg-white px-2 text-slate-500">Or continue with</span>
+        </div>
+      </div>
+
+        <div>
+          <label for="email" class="block text-sm font-medium text-slate-600 mb-1">Email</label>
+          <input id="email" type="email" placeholder="you@example.com"
+            class="w-full p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-indigo-500 transition" />
+        </div>
+        <div>
+          <label for="password" class="block text-sm font-medium text-slate-600 mb-1">Password</label>
+          <input id="password" type="password" placeholder="••••••••"
+            class="w-full p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-indigo-500 transition" />
+        </div>
+        <p id="auth-error" class="text-red-500 text-sm text-center"></p>
+        <div class="flex flex-col sm:flex-row gap-2">
+          <button id="loginButton"
+            class="w-full bg-indigo-600 text-white font-semibold p-3 rounded-md hover:bg-indigo-700 transition">
+            Login
+          </button>
+          <button id="signupButton"
+            class="w-full bg-slate-600 text-white font-semibold p-3 rounded-md hover:bg-slate-700 transition">
+            Sign Up
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="app-container" class="container mx-auto max-w-5xl p-4 sm:p-6 lg:p-8 hidden">
+    <div class="flex justify-between items-center text-center mb-10">
+        <div></div> <div>
+            <h1 class="text-4xl sm:text-5xl font-extrabold text-slate-900 mb-2">
+                My Tasks
+            </h1>
+            <p class="text-slate-500">
+                Welcome, <span id="user-email" class="font-semibold"></span>!
+            </p>
+        </div>
+        <button id="logoutButton" class="bg-red-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-red-600 transition">
+            Logout
+        </button>
+    </div>
+
+    <div class="bg-white p-6 rounded-xl shadow-sm mb-8">
+      <h2 class="text-2xl font-bold text-slate-800 mb-5">Add New Task</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
           <div class="md:col-span-2">
             <label
               for="taskTitle"
@@ -154,273 +206,354 @@
             </button>
           </div>
         </div>
-      </div>
-
-      <div class="mb-8">
-        <h2 class="text-2xl font-bold text-slate-800 mb-4">
-          Progress Dashboard
-        </h2>
-        <div
-          id="dashboard"
-          class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
-        >
-          <div class="bg-white p-5 rounded-xl shadow-sm">
-            <h3 class="text-sm font-medium text-slate-500">Total Tasks</h3>
-            <p id="totalTasks" class="text-3xl font-bold text-slate-900">0</p>
-          </div>
-          <div class="bg-white p-5 rounded-xl shadow-sm">
-            <h3 class="text-sm font-medium text-slate-500">In Progress</h3>
-            <p id="inProgressTasks" class="text-3xl font-bold text-slate-900">
-              0
-            </p>
-          </div>
-          <div class="bg-white p-5 rounded-xl shadow-sm">
-            <h3 class="text-sm font-medium text-slate-500">Completed</h3>
-            <p id="completedTasks" class="text-3xl font-bold text-slate-900">
-              0
-            </p>
-          </div>
-          <div class="bg-white p-5 rounded-xl shadow-sm">
-            <h3 class="text-sm font-medium text-slate-500">Completion Rate</h3>
-            <p id="completionRate" class="text-3xl font-bold text-slate-900">
-              0%
-            </p>
-          </div>
+    </div>
+    <div class="mb-8">
+      <h2 class="text-2xl font-bold text-slate-800 mb-4">
+        Progress Dashboard
+      </h2>
+      <div
+        id="dashboard"
+        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
+      >
+        <div class="bg-white p-5 rounded-xl shadow-sm">
+          <h3 class="text-sm font-medium text-slate-500">Total Tasks</h3>
+          <p id="totalTasks" class="text-3xl font-bold text-slate-900">0</p>
+        </div>
+        <div class="bg-white p-5 rounded-xl shadow-sm">
+          <h3 class="text-sm font-medium text-slate-500">In Progress</h3>
+          <p id="inProgressTasks" class="text-3xl font-bold text-slate-900">
+            0
+          </p>
+        </div>
+        <div class="bg-white p-5 rounded-xl shadow-sm">
+          <h3 class="text-sm font-medium text-slate-500">Completed</h3>
+          <p id="completedTasks" class="text-3xl font-bold text-slate-900">
+            0
+          </p>
+        </div>
+        <div class="bg-white p-5 rounded-xl shadow-sm">
+          <h3 class="text-sm font-medium text-slate-500">Completion Rate</h3>
+          <p id="completionRate" class="text-3xl font-bold text-slate-900">
+            0%
+          </p>
         </div>
       </div>
-
-      <div class="bg-white p-6 rounded-xl shadow-sm">
-        <h2 class="text-2xl font-bold text-slate-800 mb-4">My Task List</h2>
-        <div id="taskList" class="space-y-4"></div>
-      </div>
     </div>
+    <div class="bg-white p-6 rounded-xl shadow-sm">
+      <h2 class="text-2xl font-bold text-slate-800 mb-4">My Task List</h2>
+      <div id="taskList" class="space-y-4"></div>
+    </div>
+  </div>
+</body>
+
 
     <script type="module">
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
-      import {
-        getFirestore,
-        collection,
-        addDoc,
-        getDocs,
-        query,
-        orderBy,
-        updateDoc,
-        doc,
-        deleteDoc,
-        serverTimestamp,
-        onSnapshot,
-      } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+              import { initializeApp } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js";
+              import {
+                getAuth,
+                createUserWithEmailAndPassword,
+                signInWithEmailAndPassword,
+                signOut,
+                onAuthStateChanged,
+                GoogleAuthProvider,   // <-- Import GoogleAuthProvider
+                signInWithPopup,      // <-- Import signInWithPopup
+              } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+              import {
+                getFirestore,
+                collection,
+                addDoc,
+                getDocs,
+                query,
+                orderBy,
+                updateDoc,
+                doc,
+                deleteDoc,
+                serverTimestamp,
+                onSnapshot,
+              } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
-      // --- Your Firebase Config ---
-      const firebaseConfig = {
-        apiKey: "AIzaSyAg-SOTza5s7RPXTARsUa1DqU0UTG1MVOg",
-        authDomain: "todo-app-f0b27.firebaseapp.com",
-        projectId: "todo-app-f0b27",
-        storageBucket: "todo-app-f0b27.firebasestorage.app",
-        messagingSenderId: "193322568260",
-        appId: "1:193322568260:web:12356785e93cf222f18a11",
-        measurementId: "G-CG33WLLSMJ",
-      };
+              // --- Your Firebase Config ---
+              const firebaseConfig = {
+                apiKey: "AIzaSyAg-SOTza5s7RPXTARsUa1DqU0UTG1MVOg",
+                authDomain: "todo-app-f0b27.firebaseapp.com",
+                projectId: "todo-app-f0b27",
+                storageBucket: "todo-app-f0b27.firebasestorage.app",
+                messagingSenderId: "193322568260",
+                appId: "1:193322568260:web:12356785e93cf222f18a11",
+                measurementId: "G-CG33WLLSMJ",
+              };
 
-      const app = initializeApp(firebaseConfig);
-      const db = getFirestore(app);
+              const app = initializeApp(firebaseConfig);
+              const db = getFirestore(app);
+              const auth = getAuth(app); // <-- Initialize Auth
+              const googleProvider = new GoogleAuthProvider(); 
 
-      Notification.requestPermission();
+              const authContainer = document.getElementById("auth-container");
+              const appContainer = document.getElementById("app-container");
+              const loginButton = document.getElementById("loginButton");
+              const signupButton = document.getElementById("signupButton");
+              const logoutButton = document.getElementById("logoutButton");
+              const googleLoginButton = document.getElementById('googleLoginButton'); // <-- Get the new button
+              const userEmailSpan = document.getElementById("user-email");
+              const authError = document.getElementById("auth-error");
 
-      // --- Add Task Function ---
-      window.addTask = async function addTask() {
-        const title = document.getElementById("taskTitle").value;
-        const description = document.getElementById("taskDescription").value;
-        const deliverable = document.getElementById("taskDeliverable").value;
-        const priority = document.getElementById("taskPriority").value;
-        const category = document.getElementById("taskCategory").value;
-        const dueDate = document.getElementById("taskDueDate").value;
-        // Get value from new field
-        const assignedBy = document.getElementById("taskAssignedBy").value;
+              // --- Google Sign-In ---
+              googleLoginButton.addEventListener('click', async () => {
+                authError.textContent = '';
+                try {
+                  const result = await signInWithPopup(auth, googleProvider);
+                  console.log('Signed in with Google:', result.user);
+                } catch (error) {
+                  authError.textContent = error.message;
+                  console.error('Error with Google sign-in:', error);
+                }
+              });
 
-        if (!title || !dueDate) {
-          alert("Title and Due Date are required!");
-          return;
-        }
+              // --- Add Task Function ---
+              window.addTask = async function addTask() {
+                const title = document.getElementById("taskTitle").value;
+                const description = document.getElementById("taskDescription").value;
+                const deliverable = document.getElementById("taskDeliverable").value;
+                const priority = document.getElementById("taskPriority").value;
+                const category = document.getElementById("taskCategory").value;
+                const dueDate = document.getElementById("taskDueDate").value;
+                // Get value from new field
+                const assignedBy = document.getElementById("taskAssignedBy").value;
 
-        try {
-          await addDoc(collection(db, "tasks"), {
-            title,
-            description,
-            deliverable,
-            priority,
-            category,
-            dueDate,
-            // Add new field to Firestore
-            assignedBy,
-            status: "Not Started",
-            createdAt: serverTimestamp(),
-          });
-          document.getElementById("taskTitle").value = "";
-          document.getElementById("taskDescription").value = "";
-          document.getElementById("taskDeliverable").value = "";
-          document.getElementById("taskDueDate").value = "";
-          // Clear the new field
-          document.getElementById("taskAssignedBy").value = "";
-          setReminder(dueDate, title);
-        } catch (error) {
-          console.error("Error adding task:", error);
-          alert("Failed to add task. Check console for details.");
-        }
-      };
+                // --- Auth State Observer ---
+                // This is the central function that manages UI based on login state
+                onAuthStateChanged(auth, (user) => {
+                  if (user) {
+                    // User is signed in
+                    console.log("User is logged in:", user);
+                    authContainer.classList.add("hidden");
+                    appContainer.classList.remove("hidden");
+                    userEmailSpan.textContent = user.email;
 
-      // --- Set Reminder Function ---
-      function setReminder(dueDate, title) {
-        const DateTime = luxon.DateTime;
-        const due = DateTime.fromISO(dueDate);
-        const now = DateTime.now();
-        const diff = due.diff(now, "milliseconds").milliseconds;
-        if (diff > 0) {
-          setTimeout(() => {
-            new Notification(`Reminder: ${title}`, {
-              body: `Task "${title}" is due soon!`,
-            });
-          }, diff - 60000); // Remind 1 minute before
-        }
-      }
+                    // Load user-specific tasks
+                    setupRealtimeListener(user);
+                  } else {
+                    // User is signed out
+                    console.log("User is signed out");
+                    authContainer.classList.remove("hidden");
+                    appContainer.classList.add("hidden");
+                    document.getElementById("taskList").innerHTML = ""; // Clear tasks on logout
+                  }
+                });
 
-      // --- Priority Badge Helper ---
-      function getPriorityBadge(priority) {
-        switch (priority) {
-          case "High":
-            return `<span class="text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full bg-red-100 text-red-800">High</span>`;
-          case "Medium":
-            return `<span class="text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full bg-yellow-100 text-yellow-800">Medium</span>`;
-          case "Low":
-            return `<span class="text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full bg-green-100 text-green-800">Low</span>`;
-          default:
-            return "";
-        }
-      }
+                // --- Auth Event Listeners ---
+                signupButton.addEventListener("click", async () => {
+                  const email = document.getElementById("email").value;
+                  const password = document.getElementById("password").value;
+                  authError.textContent = "";
+                  try {
+                    const userCredential = await createUserWithEmailAndPassword(
+                      auth,
+                      email,
+                      password
+                    );
+                    console.log("Signed up:", userCredential.user);
+                  } catch (error) {
+                    authError.textContent = error.message;
+                    console.error("Error signing up:", error);
+                  }
+                });
 
-      // --- Load Tasks Function ---
-      async function loadTasks() {
+                loginButton.addEventListener("click", async () => {
+                  const email = document.getElementById("email").value;
+                  const password = document.getElementById("password").value;
+                  authError.textContent = "";
+                  try {
+                    const userCredential = await signInWithEmailAndPassword(
+                      auth,
+                      email,
+                      password
+                    );
+                    console.log("Logged in:", userCredential.user);
+                  } catch (error) {
+                    authError.textContent = error.message;
+                    console.error("Error logging in:", error);
+                  }
+                });
+
+                logoutButton.addEventListener("click", async () => {
+                  try {
+                    await signOut(auth);
+                    console.log("User signed out");
+                  } catch (error) {
+                    console.error("Error signing out:", error);
+                  }
+                });
+
+                Notification.requestPermission();
+                // --- Add Task Function (SECURED) ---
+          window.addTask = async function addTask() {
+            const user = auth.currentUser;
+            if (!user) {
+                alert("You must be logged in to add a task.");
+                return;
+            }
+
+            const title = document.getElementById("taskTitle").value;
+            const description = document.getElementById("taskDescription").value;
+            const deliverable = document.getElementById("taskDeliverable").value;
+            const priority = document.getElementById("taskPriority").value;
+            const category = document.getElementById("taskCategory").value;
+            const dueDate = document.getElementById("taskDueDate").value;
+            const assignedBy = document.getElementById("taskAssignedBy").value;
+
+
+                if (!title || !dueDate) {
+                  alert("Title and Due Date are required!");
+                  return;
+                }
+
+                try {
+                  await addDoc(collection(db, "tasks"), {
+                    userId: user.uid, // <-- Associate task with user ID
+                    title,
+                    description,
+                    deliverable,
+                    priority,
+                    category,
+                    dueDate,
+                    // Add new field to Firestore
+                    assignedBy,
+                    status: "Not Started",
+                    createdAt: serverTimestamp(),
+                  });
+                  document.getElementById("taskTitle").value = "";
+                  document.getElementById("taskDescription").value = "";
+                  document.getElementById("taskDeliverable").value = "";
+                  document.getElementById("taskDueDate").value = "";
+                  // Clear the new field
+                  document.getElementById("taskAssignedBy").value = "";
+                  setReminder(dueDate, title);
+                } catch (error) {
+                  console.error("Error adding task:", error);
+                  alert("Failed to add task. Check console for details.");
+                }
+              };
+
+              // --- Load Tasks Function (SECURED) ---
+      // Note: This is now called by the realtime listener
+      async function loadTasks(user) {
+        if (!user) return; // Don't run if no user
+
         const taskList = document.getElementById("taskList");
-        taskList.innerHTML = ""; // Clear existing tasks
-        let totalTasks = 0;
-        let completedTasks = 0;
-        // New counter for in-progress tasks
-        let inProgressTasks = 0;
+        taskList.innerHTML = "";
+        let totalTasks = 0, completedTasks = 0, inProgressTasks = 0;
 
-        try {
-          const q = query(
-            collection(db, "tasks"),
-            orderBy("createdAt", "desc")
-          );
-          const snapshot = await getDocs(q);
+        // Secure query: gets only tasks where userId matches the logged-in user's UID
+        const q = query(
+          collection(db, "tasks"),
+          where("userId", "==", user.uid),
+          orderBy("createdAt", "desc")
+        );
 
-          if (snapshot.empty) {
-            taskList.innerHTML = `<p class="text-slate-500 text-center py-4">No tasks yet. Add one above to get started!</p>`;
-          }
+        const snapshot = await getDocs(q);
 
-          snapshot.forEach((doc) => {
-            const task = doc.data();
-            totalTasks++;
-            // Increment counters based on status
-            if (task.status === "Completed") completedTasks++;
-            if (task.status === "In Progress") inProgressTasks++;
-
-            const taskDiv = document.createElement("div");
-            taskDiv.className =
-              "p-4 border border-slate-200 rounded-lg transition-shadow hover:shadow-md";
-            taskDiv.innerHTML = `
-                      <div class="flex flex-col sm:flex-row justify-between sm:items-center">
-                        <div class="flex-grow">
-                          <div class="flex items-center mb-2">
-                            ${getPriorityBadge(task.priority)}
-                            <h3 class="font-bold text-lg text-slate-800">${
-                              task.title
-                            }</h3>
-                          </div>
-                          <p class="text-slate-600 text-sm mb-2">${
-                            task.description || "No description"
-                          }</p>
-                          <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-500">
-                              <p><strong>Deliverable:</strong> ${
-                                task.deliverable || "None"
-                              }</p>
-                              <p><strong>Category:</strong> ${task.category}</p>
-                              <p><strong>Assigned By:</strong> ${
-                                task.assignedBy || "N/A"
-                              }</p>
-                              <p><strong>Due:</strong> ${luxon.DateTime.fromISO(
-                                task.dueDate
-                              ).toLocaleString(
-                                luxon.DateTime.DATETIME_SHORT
-                              )}</p>
-                          </div>
-                        </div>
-                        <div class="flex items-center space-x-2 mt-4 sm:mt-0">
-                           <select onchange="updateStatus('${
-                             doc.id
-                           }', this.value)" class="w-full sm:w-auto text-sm p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-indigo-500 transition">
-                              <option value="Not Started" ${
-                                task.status === "Not Started" ? "selected" : ""
-                              }>Not Started</option>
-                              <option value="In Progress" ${
-                                task.status === "In Progress" ? "selected" : ""
-                              }>In Progress</option>
-                              <option value="Completed" ${
-                                task.status === "Completed" ? "selected" : ""
-                              }>Completed</option>
-                           </select>
-                           <button onclick="deleteTask('${
-                             doc.id
-                           }')" class="text-slate-500 hover:text-red-600 p-2 rounded-md transition-colors">
-                              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
-                           </button>
-                        </div>
-                      </div>
-                    `;
-            taskList.appendChild(taskDiv);
-          });
-
-          // Update Dashboard
-          document.getElementById("totalTasks").textContent = totalTasks;
-          document.getElementById("completedTasks").textContent =
-            completedTasks;
-          // Update new In Progress card
-          document.getElementById("inProgressTasks").textContent =
-            inProgressTasks;
-          document.getElementById("completionRate").textContent = totalTasks
-            ? ((completedTasks / totalTasks) * 100).toFixed(1) + "%"
-            : "0%";
-        } catch (error) {
-          console.error("Error loading tasks:", error);
+        if (snapshot.empty) {
+          taskList.innerHTML = `<p class="text-slate-500 text-center py-4">No tasks yet. Add one to get started!</p>`;
         }
+
+        snapshot.forEach((doc) => {
+          const task = doc.data();
+          totalTasks++;
+          if (task.status === "Completed") completedTasks++;
+          if (task.status === "In Progress") inProgressTasks++;
+          // ... (The rest of the task rendering logic is the same)
+          const taskDiv = document.createElement("div");
+          taskDiv.className = "p-4 border border-slate-200 rounded-lg transition-shadow hover:shadow-md";
+          taskDiv.innerHTML = `
+            <div class="flex flex-col sm:flex-row justify-between sm:items-center">
+              <div class="flex-grow">
+                <div class="flex items-center mb-2">
+                  ${getPriorityBadge(task.priority)}
+                  <h3 class="font-bold text-lg text-slate-800">${task.title}</h3>
+                </div>
+                <p class="text-slate-600 text-sm mb-2">${task.description || "No description"}</p>
+                <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-500">
+                  <p><strong>Deliverable:</strong> ${task.deliverable || "None"}</p>
+                  <p><strong>Category:</strong> ${task.category}</p>
+                  <p><strong>Assigned By:</strong> ${task.assignedBy || "N/A"}</p>
+                  <p><strong>Due:</strong> ${luxon.DateTime.fromISO(task.dueDate).toLocaleString(luxon.DateTime.DATETIME_SHORT)}</p>
+                </div>
+              </div>
+              <div class="flex items-center space-x-2 mt-4 sm:mt-0">
+                <select onchange="updateStatus('${doc.id}', this.value)" class="w-full sm:w-auto text-sm p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-indigo-500 transition">
+                  <option value="Not Started" ${task.status === "Not Started" ? "selected" : ""}>Not Started</option>
+                  <option value="In Progress" ${task.status === "In Progress" ? "selected" : ""}>In Progress</option>
+                  <option value="Completed" ${task.status === "Completed" ? "selected" : ""}>Completed</option>
+                </select>
+                <button onclick="deleteTask('${doc.id}')" class="text-slate-500 hover:text-red-600 p-2 rounded-md transition-colors">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                </button>
+              </div>
+            </div>
+          `;
+          taskList.appendChild(taskDiv);
+        });
+
+        // Update Dashboard
+        document.getElementById("totalTasks").textContent = totalTasks;
+        document.getElementById("inProgressTasks").textContent = inProgressTasks;
+        document.getElementById("completedTasks").textContent = completedTasks;
+        document.getElementById("completionRate").textContent = totalTasks ? ((completedTasks / totalTasks) * 100).toFixed(1) + "%" : "0%";
       }
 
-      // --- Update Task Status ---
-      window.updateStatus = async function updateStatus(taskId, status) {
-        try {
-          await updateDoc(doc(db, "tasks", taskId), { status });
-        } catch (error) {
-          console.error("Error updating status:", error);
-        }
-      };
+      // --- Real-time Listener Setup ---
+      let unsubscribe; // To store the listener unsubscribe function
 
-      // --- Delete Task ---
-      window.deleteTask = async function deleteTask(taskId) {
-        if (!confirm("Are you sure you want to delete this task?")) return;
-        try {
-          await deleteDoc(doc(db, "tasks", taskId));
-        } catch (error) {
-          console.error("Error deleting task:", error);
+      function setupRealtimeListener(user) {
+        if (unsubscribe) {
+          unsubscribe(); // Unsubscribe from any previous listener
         }
-      };
 
-      // --- Real-time Listener ---
-      onSnapshot(
-        query(collection(db, "tasks"), orderBy("createdAt", "desc")),
-        (snapshot) => {
-          loadTasks();
-        }
-      );
+        const q = query(
+            collection(db, "tasks"),
+            where("userId", "==", user.uid),
+            orderBy("createdAt", "desc")
+        );
+
+        unsubscribe = onSnapshot(q, (snapshot) => {
+            // We'll call loadTasks whenever the data changes.
+            // This is simpler than re-implementing the full render logic here.
+            loadTasks(user);
+        }, (error) => {
+            console.error("Error with realtime listener:", error);
+        });
+      }
+
+              // --- Set Reminder Function ---
+              function setReminder(dueDate, title) {
+                const DateTime = luxon.DateTime;
+                const due = DateTime.fromISO(dueDate);
+                const now = DateTime.now();
+                const diff = due.diff(now, "milliseconds").milliseconds;
+                if (diff > 0) {
+                  setTimeout(() => {
+                    new Notification(`Reminder: ${title}`, {
+                      body: `Task "${title}" is due soon!`,
+                    });
+                  }, diff - 60000); // Remind 1 minute before
+                }
+              }
+
+              // --- Priority Badge Helper ---
+              function getPriorityBadge(priority) {
+                switch (priority) {
+                  case "High":
+                    return `<span class="text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full bg-red-100 text-red-800">High</span>`;
+                  case "Medium":
+                    return `<span class="text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full bg-yellow-100 text-yellow-800">Medium</span>`;
+                  case "Low":
+                    return `<span class="text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full bg-green-100 text-green-800">Low</span>`;
+                  default:
+                    return "";
+                }
+              }
+            };
     </script>
   </body>
 </html>
