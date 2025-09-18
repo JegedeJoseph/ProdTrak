@@ -303,15 +303,8 @@
 
   // Handle redirect result once at startup
 getRedirectResult(auth).then((result) => {
-  if (result) {
+  if (result && result.user) {
     console.log("Google sign-in result:", result.user);
-
-     // 🔑 Show app UI immediately after redirect
-      authContainer.classList.add("hidden");
-      appContainer.classList.remove("hidden");
-      userEmailSpan.textContent = result.user.email || result.user.displayName;
-      setupRealtimeListener(result.user);
-    
   }
 }).catch((error) => {
   console.error("Error with Google redirect:", error);
@@ -353,12 +346,6 @@ getRedirectResult(auth).then((result) => {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       console.log("Signed up:", userCredential.user);
 
-      // 🔑 Show app right away
-    authContainer.classList.add("hidden");
-    appContainer.classList.remove("hidden");
-    userEmailSpan.textContent = userCredential.user.email;
-    setupRealtimeListener(userCredential.user);
-
     } catch (error) {
       authError.textContent = error.message;
       console.error("Error signing up:", error);
@@ -372,12 +359,6 @@ getRedirectResult(auth).then((result) => {
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       console.log("Logged in:", userCredential.user);
-
-      // 🔑 Force UI update immediately
-    authContainer.classList.add("hidden");
-    appContainer.classList.remove("hidden");
-    userEmailSpan.textContent = userCredential.user.email;
-    setupRealtimeListener(userCredential.user);
 
     } catch (error) {
       authError.textContent = error.message;
