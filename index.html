@@ -18,6 +18,7 @@
       type="module"
       src="https://www.gstatic.com/firebasejs/12.1.0/firebase-app.js"
     ></script>
+        <script type="module" src="https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js"></script>
     <script
       type="module"
       src="https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js"
@@ -256,7 +257,8 @@
                 signOut,
                 onAuthStateChanged,
                 GoogleAuthProvider,   // <-- Import GoogleAuthProvider
-                signInWithPopup,      // <-- Import signInWithPopup
+                signInWithRedirect, 
+                getRedirectResult,   // <-- Import getRedirectResult (for Google redirect flow)
               } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
               import {
                 getFirestore,
@@ -270,6 +272,7 @@
                 deleteDoc,
                 serverTimestamp,
                 onSnapshot,
+                where,
               } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
               // --- Your Firebase Config ---
@@ -288,272 +291,272 @@
               const auth = getAuth(app); // <-- Initialize Auth
               const googleProvider = new GoogleAuthProvider(); 
 
-              const authContainer = document.getElementById("auth-container");
-              const appContainer = document.getElementById("app-container");
-              const loginButton = document.getElementById("loginButton");
-              const signupButton = document.getElementById("signupButton");
-              const logoutButton = document.getElementById("logoutButton");
-              const googleLoginButton = document.getElementById('googleLoginButton'); // <-- Get the new button
-              const userEmailSpan = document.getElementById("user-email");
-              const authError = document.getElementById("auth-error");
+             // --- UI Element References ---
+  const authContainer = document.getElementById("auth-container");
+  const appContainer = document.getElementById("app-container");
+  const loginButton = document.getElementById("loginButton");
+  const signupButton = document.getElementById("signupButton");
+  const logoutButton = document.getElementById("logoutButton");
+  const googleLoginButton = document.getElementById('googleLoginButton');
+  const userEmailSpan = document.getElementById("user-email");
+  const authError = document.getElementById("auth-error");
 
-              // --- Google Sign-In ---
-              googleLoginButton.addEventListener('click', async () => {
-                authError.textContent = '';
-                try {
-                  const result = await signInWithPopup(auth, googleProvider);
-                  console.log('Signed in with Google:', result.user);
-                } catch (error) {
-                  authError.textContent = error.message;
-                  console.error('Error with Google sign-in:', error);
-                }
-              });
+  // Handle redirect result once at startup
+getRedirectResult(auth).then((result) => {
+  if (result) {
+    console.log("Google sign-in result:", result.user);
 
-              // --- Add Task Function ---
-              window.addTask = async function addTask() {
-                const title = document.getElementById("taskTitle").value;
-                const description = document.getElementById("taskDescription").value;
-                const deliverable = document.getElementById("taskDeliverable").value;
-                const priority = document.getElementById("taskPriority").value;
-                const category = document.getElementById("taskCategory").value;
-                const dueDate = document.getElementById("taskDueDate").value;
-                // Get value from new field
-                const assignedBy = document.getElementById("taskAssignedBy").value;
+     // 🔑 Show app UI immediately after redirect
+      authContainer.classList.add("hidden");
+      appContainer.classList.remove("hidden");
+      userEmailSpan.textContent = result.user.email || result.user.displayName;
+      setupRealtimeListener(result.user);
+    
+  }
+}).catch((error) => {
+  console.error("Error with Google redirect:", error);
+});
 
-                // --- Auth State Observer ---
-                // This is the central function that manages UI based on login state
-                onAuthStateChanged(auth, (user) => {
-                  if (user) {
-                    // User is signed in
-                    console.log("User is logged in:", user);
-                    authContainer.classList.add("hidden");
-                    appContainer.classList.remove("hidden");
-                    userEmailSpan.textContent = user.email;
+  // --- Primary Auth State Observer & Redirect Handler ---
+  onAuthStateChanged(auth, async (user) => {
+    if (user) {
+      console.log("User is logged in:", user);
+      authContainer.classList.add("hidden");
+      appContainer.classList.remove("hidden");
+      userEmailSpan.textContent = user.email || user.displayName;
+      setupRealtimeListener(user);
+    } else {
+      console.log("User is signed out");
+      authContainer.classList.remove("hidden");
+      appContainer.classList.add("hidden");
+      document.getElementById("taskList").innerHTML = "";
+    }
+  });
 
-                    // Load user-specific tasks
-                    setupRealtimeListener(user);
-                  } else {
-                    // User is signed out
-                    console.log("User is signed out");
-                    authContainer.classList.remove("hidden");
-                    appContainer.classList.add("hidden");
-                    document.getElementById("taskList").innerHTML = ""; // Clear tasks on logout
-                  }
-                });
+  // --- Google Sign-In Event Listener ---
+  googleLoginButton.addEventListener('click', async () => {
+    authError.textContent = '';
+    try {
+      await signInWithRedirect(auth, googleProvider);
+    } catch (error) {
+      authError.textContent = error.message;
+      console.error('Error with Google sign-in:', error);
+    }
+  });
 
-                // --- Auth Event Listeners ---
-                signupButton.addEventListener("click", async () => {
-                  const email = document.getElementById("email").value;
-                  const password = document.getElementById("password").value;
-                  authError.textContent = "";
-                  try {
-                    const userCredential = await createUserWithEmailAndPassword(
-                      auth,
-                      email,
-                      password
-                    );
-                    console.log("Signed up:", userCredential.user);
-                  } catch (error) {
-                    authError.textContent = error.message;
-                    console.error("Error signing up:", error);
-                  }
-                });
+  // --- Other Auth Event Listeners ---
+  signupButton.addEventListener("click", async () => {
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    authError.textContent = "";
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      console.log("Signed up:", userCredential.user);
 
-                loginButton.addEventListener("click", async () => {
-                  const email = document.getElementById("email").value;
-                  const password = document.getElementById("password").value;
-                  authError.textContent = "";
-                  try {
-                    const userCredential = await signInWithEmailAndPassword(
-                      auth,
-                      email,
-                      password
-                    );
-                    console.log("Logged in:", userCredential.user);
-                  } catch (error) {
-                    authError.textContent = error.message;
-                    console.error("Error logging in:", error);
-                  }
-                });
+      // 🔑 Show app right away
+    authContainer.classList.add("hidden");
+    appContainer.classList.remove("hidden");
+    userEmailSpan.textContent = userCredential.user.email;
+    setupRealtimeListener(userCredential.user);
 
-                logoutButton.addEventListener("click", async () => {
-                  try {
-                    await signOut(auth);
-                    console.log("User signed out");
-                  } catch (error) {
-                    console.error("Error signing out:", error);
-                  }
-                });
+    } catch (error) {
+      authError.textContent = error.message;
+      console.error("Error signing up:", error);
+    }
+  });
 
-                Notification.requestPermission();
-                // --- Add Task Function (SECURED) ---
-          window.addTask = async function addTask() {
-            const user = auth.currentUser;
-            if (!user) {
-                alert("You must be logged in to add a task.");
-                return;
-            }
+  loginButton.addEventListener("click", async () => {
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
+    authError.textContent = "";
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      console.log("Logged in:", userCredential.user);
 
-            const title = document.getElementById("taskTitle").value;
-            const description = document.getElementById("taskDescription").value;
-            const deliverable = document.getElementById("taskDeliverable").value;
-            const priority = document.getElementById("taskPriority").value;
-            const category = document.getElementById("taskCategory").value;
-            const dueDate = document.getElementById("taskDueDate").value;
-            const assignedBy = document.getElementById("taskAssignedBy").value;
+      // 🔑 Force UI update immediately
+    authContainer.classList.add("hidden");
+    appContainer.classList.remove("hidden");
+    userEmailSpan.textContent = userCredential.user.email;
+    setupRealtimeListener(userCredential.user);
 
+    } catch (error) {
+      authError.textContent = error.message;
+      console.error("Error logging in:", error);
+    }
+  });
 
-                if (!title || !dueDate) {
-                  alert("Title and Due Date are required!");
-                  return;
-                }
+  logoutButton.addEventListener("click", async () => {
+    try {
+      await signOut(auth);
+      console.log("User signed out");
+    } catch (error) {
+      console.error("Error signing out:", error);
+    }
+  });
 
-                try {
-                  await addDoc(collection(db, "tasks"), {
-                    userId: user.uid, // <-- Associate task with user ID
-                    title,
-                    description,
-                    deliverable,
-                    priority,
-                    category,
-                    dueDate,
-                    // Add new field to Firestore
-                    assignedBy,
-                    status: "Not Started",
-                    createdAt: serverTimestamp(),
-                  });
-                  document.getElementById("taskTitle").value = "";
-                  document.getElementById("taskDescription").value = "";
-                  document.getElementById("taskDeliverable").value = "";
-                  document.getElementById("taskDueDate").value = "";
-                  // Clear the new field
-                  document.getElementById("taskAssignedBy").value = "";
-                  setReminder(dueDate, title);
-                } catch (error) {
-                  console.error("Error adding task:", error);
-                  alert("Failed to add task. Check console for details.");
-                }
-              };
-
-              // --- Load Tasks Function (SECURED) ---
-      // Note: This is now called by the realtime listener
-      async function loadTasks(user) {
-        if (!user) return; // Don't run if no user
-
-        const taskList = document.getElementById("taskList");
-        taskList.innerHTML = "";
-        let totalTasks = 0, completedTasks = 0, inProgressTasks = 0;
-
-        // Secure query: gets only tasks where userId matches the logged-in user's UID
-        const q = query(
-          collection(db, "tasks"),
-          where("userId", "==", user.uid),
-          orderBy("createdAt", "desc")
-        );
-
-        const snapshot = await getDocs(q);
-
-        if (snapshot.empty) {
-          taskList.innerHTML = `<p class="text-slate-500 text-center py-4">No tasks yet. Add one to get started!</p>`;
-        }
-
-        snapshot.forEach((doc) => {
-          const task = doc.data();
-          totalTasks++;
-          if (task.status === "Completed") completedTasks++;
-          if (task.status === "In Progress") inProgressTasks++;
-          // ... (The rest of the task rendering logic is the same)
-          const taskDiv = document.createElement("div");
-          taskDiv.className = "p-4 border border-slate-200 rounded-lg transition-shadow hover:shadow-md";
-          taskDiv.innerHTML = `
-            <div class="flex flex-col sm:flex-row justify-between sm:items-center">
-              <div class="flex-grow">
-                <div class="flex items-center mb-2">
-                  ${getPriorityBadge(task.priority)}
-                  <h3 class="font-bold text-lg text-slate-800">${task.title}</h3>
-                </div>
-                <p class="text-slate-600 text-sm mb-2">${task.description || "No description"}</p>
-                <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-500">
-                  <p><strong>Deliverable:</strong> ${task.deliverable || "None"}</p>
-                  <p><strong>Category:</strong> ${task.category}</p>
-                  <p><strong>Assigned By:</strong> ${task.assignedBy || "N/A"}</p>
-                  <p><strong>Due:</strong> ${luxon.DateTime.fromISO(task.dueDate).toLocaleString(luxon.DateTime.DATETIME_SHORT)}</p>
-                </div>
-              </div>
-              <div class="flex items-center space-x-2 mt-4 sm:mt-0">
-                <select onchange="updateStatus('${doc.id}', this.value)" class="w-full sm:w-auto text-sm p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-indigo-500 transition">
-                  <option value="Not Started" ${task.status === "Not Started" ? "selected" : ""}>Not Started</option>
-                  <option value="In Progress" ${task.status === "In Progress" ? "selected" : ""}>In Progress</option>
-                  <option value="Completed" ${task.status === "Completed" ? "selected" : ""}>Completed</option>
-                </select>
-                <button onclick="deleteTask('${doc.id}')" class="text-slate-500 hover:text-red-600 p-2 rounded-md transition-colors">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
-                </button>
-              </div>
+  Notification.requestPermission();
+  
+  // --- All Task and Dashboard Functions are outside of the event listeners ---
+  
+  // --- Add Task Function ---
+  window.addTask = async function addTask() {
+    const user = auth.currentUser;
+    if (!user) {
+      alert("You must be logged in to add a task.");
+      return;
+    }
+    const title = document.getElementById("taskTitle").value;
+    const description = document.getElementById("taskDescription").value;
+    const deliverable = document.getElementById("taskDeliverable").value;
+    const priority = document.getElementById("taskPriority").value;
+    const category = document.getElementById("taskCategory").value;
+    const dueDate = document.getElementById("taskDueDate").value;
+    const assignedBy = document.getElementById("taskAssignedBy").value;
+    
+    if (!title || !dueDate) {
+      alert("Title and Due Date are required!");
+      return;
+    }
+    
+    try {
+      await addDoc(collection(db, "tasks"), {
+        userId: user.uid,
+        title,
+        description,
+        deliverable,
+        priority,
+        category,
+        dueDate,
+        assignedBy,
+        status: "Not Started",
+        createdAt: serverTimestamp(),
+      });
+      document.getElementById("taskTitle").value = "";
+      document.getElementById("taskDescription").value = "";
+      document.getElementById("taskDeliverable").value = "";
+      document.getElementById("taskDueDate").value = "";
+      document.getElementById("taskAssignedBy").value = "";
+      setReminder(dueDate, title);
+    } catch (error) {
+      console.error("Error adding task:", error);
+      alert("Failed to add task. Check console for details.");
+    }
+  };
+  
+  // --- Load Tasks Function ---
+  async function loadTasks(user) {
+    if (!user) return;
+    const taskList = document.getElementById("taskList");
+    taskList.innerHTML = "";
+    let totalTasks = 0, completedTasks = 0, inProgressTasks = 0;
+    const q = query(collection(db, "tasks"), where("userId", "==", user.uid), orderBy("createdAt", "desc"));
+    const snapshot = await getDocs(q);
+    
+    if (snapshot.empty) {
+      taskList.innerHTML = `<p class="text-slate-500 text-center py-4">No tasks yet. Add one to get started!</p>`;
+    }
+    
+    snapshot.forEach((doc) => {
+      const task = doc.data();
+      totalTasks++;
+      if (task.status === "Completed") completedTasks++;
+      if (task.status === "In Progress") inProgressTasks++;
+      
+      const taskDiv = document.createElement("div");
+      taskDiv.className = "p-4 border border-slate-200 rounded-lg transition-shadow hover:shadow-md";
+      taskDiv.innerHTML = `
+        <div class="flex flex-col sm:flex-row justify-between sm:items-center">
+          <div class="flex-grow">
+            <div class="flex items-center mb-2">
+              ${getPriorityBadge(task.priority)}
+              <h3 class="font-bold text-lg text-slate-800">${task.title}</h3>
             </div>
-          `;
-          taskList.appendChild(taskDiv);
+            <p class="text-slate-600 text-sm mb-2">${task.description || "No description"}</p>
+            <div class="flex flex-wrap gap-x-4 gap-y-1 text-xs text-slate-500">
+              <p><strong>Deliverable:</strong> ${task.deliverable || "None"}</p>
+              <p><strong>Category:</strong> ${task.category}</p>
+              <p><strong>Assigned By:</strong> ${task.assignedBy || "N/A"}</p>
+              <p><strong>Due:</strong> ${luxon.DateTime.fromISO(task.dueDate).toLocaleString(luxon.DateTime.DATETIME_SHORT)}</p>
+            </div>
+          </div>
+          <div class="flex items-center space-x-2 mt-4 sm:mt-0">
+            <select onchange="updateStatus('${doc.id}', this.value)" class="w-full sm:w-auto text-sm p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-indigo-500 transition">
+              <option value="Not Started" ${task.status === "Not Started" ? "selected" : ""}>Not Started</option>
+              <option value="In Progress" ${task.status === "In Progress" ? "selected" : ""}>In Progress</option>
+              <option value="Completed" ${task.status === "Completed" ? "selected" : ""}>Completed</option>
+            </select>
+            <button onclick="deleteTask('${doc.id}')" class="text-slate-500 hover:text-red-600 p-2 rounded-md transition-colors">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+            </button>
+          </div>
+        </div>
+      `;
+      taskList.appendChild(taskDiv);
+    });
+    
+    document.getElementById("totalTasks").textContent = totalTasks;
+    document.getElementById("inProgressTasks").textContent = inProgressTasks;
+    document.getElementById("completedTasks").textContent = completedTasks;
+    document.getElementById("completionRate").textContent = totalTasks ? ((completedTasks / totalTasks) * 100).toFixed(1) + "%" : "0%";
+  }
+
+  // --- Real-time Listener Setup ---
+  let unsubscribe;
+  function setupRealtimeListener(user) {
+    if (unsubscribe) {
+      unsubscribe();
+    }
+    const q = query(collection(db, "tasks"), where("userId", "==", user.uid), orderBy("createdAt", "desc"));
+    unsubscribe = onSnapshot(q, () => {
+      loadTasks(user);
+    }, (error) => {
+      console.error("Error with realtime listener:", error);
+    });
+  }
+
+  // --- Helper Functions ---
+  window.updateStatus = async function (docId, newStatus) {
+    const user = auth.currentUser;
+    if (!user) return;
+    const taskRef = doc(db, "tasks", docId);
+    await updateDoc(taskRef, { status: newStatus });
+  };
+  
+  window.deleteTask = async function (docId) {
+    const user = auth.currentUser;
+    if (!user) return;
+    const confirmed = confirm("Are you sure you want to delete this task?");
+    if (confirmed) {
+      await deleteDoc(doc(db, "tasks", docId));
+    }
+  };
+  
+  function setReminder(dueDate, title) {
+    const DateTime = luxon.DateTime;
+    const due = DateTime.fromISO(dueDate);
+    const now = DateTime.now();
+    const diff = due.diff(now, "milliseconds").milliseconds;
+    if (diff > 0) {
+      setTimeout(() => {
+        new Notification(`Reminder: ${title}`, {
+          body: `Task "${title}" is due soon!`,
         });
+      }, diff - 60000); // Remind 1 minute before
+    }
+  }
 
-        // Update Dashboard
-        document.getElementById("totalTasks").textContent = totalTasks;
-        document.getElementById("inProgressTasks").textContent = inProgressTasks;
-        document.getElementById("completedTasks").textContent = completedTasks;
-        document.getElementById("completionRate").textContent = totalTasks ? ((completedTasks / totalTasks) * 100).toFixed(1) + "%" : "0%";
-      }
-
-      // --- Real-time Listener Setup ---
-      let unsubscribe; // To store the listener unsubscribe function
-
-      function setupRealtimeListener(user) {
-        if (unsubscribe) {
-          unsubscribe(); // Unsubscribe from any previous listener
-        }
-
-        const q = query(
-            collection(db, "tasks"),
-            where("userId", "==", user.uid),
-            orderBy("createdAt", "desc")
-        );
-
-        unsubscribe = onSnapshot(q, (snapshot) => {
-            // We'll call loadTasks whenever the data changes.
-            // This is simpler than re-implementing the full render logic here.
-            loadTasks(user);
-        }, (error) => {
-            console.error("Error with realtime listener:", error);
-        });
-      }
-
-              // --- Set Reminder Function ---
-              function setReminder(dueDate, title) {
-                const DateTime = luxon.DateTime;
-                const due = DateTime.fromISO(dueDate);
-                const now = DateTime.now();
-                const diff = due.diff(now, "milliseconds").milliseconds;
-                if (diff > 0) {
-                  setTimeout(() => {
-                    new Notification(`Reminder: ${title}`, {
-                      body: `Task "${title}" is due soon!`,
-                    });
-                  }, diff - 60000); // Remind 1 minute before
-                }
-              }
-
-              // --- Priority Badge Helper ---
-              function getPriorityBadge(priority) {
-                switch (priority) {
-                  case "High":
-                    return `<span class="text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full bg-red-100 text-red-800">High</span>`;
-                  case "Medium":
-                    return `<span class="text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full bg-yellow-100 text-yellow-800">Medium</span>`;
-                  case "Low":
-                    return `<span class="text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full bg-green-100 text-green-800">Low</span>`;
-                  default:
-                    return "";
-                }
-              }
-            };
-    </script>
+  function getPriorityBadge(priority) {
+    switch (priority) {
+      case "High":
+        return `<span class="text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full bg-red-100 text-red-800">High</span>`;
+      case "Medium":
+        return `<span class="text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full bg-yellow-100 text-yellow-800">Medium</span>`;
+      case "Low":
+        return `<span class="text-xs font-medium mr-2 px-2.5 py-0.5 rounded-full bg-green-100 text-green-800">Low</span>`;
+      default:
+        return "";
+    }
+  }
+</script>
   </body>
 </html>
