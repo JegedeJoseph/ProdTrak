@@ -74,7 +74,7 @@
     <!-- =================================== -->
      <div id="welcome-container" class="container mx-auto max-w-3xl p-4 sm:p-6 lg:p-8 hidden">
         <div class="bg-white p-8 rounded-xl shadow-md text-center">
-            <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-indigo-100 mb-5">
+            <div class="mx-auto flex items-center justify-center h-10 w-10 rounded-full bg-indigo-100 mb-5">
                  <svg class="h-4 w-4 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
@@ -124,15 +124,13 @@
     </div>
 
      <!--Email and Send Button -->
-      <div class="bg-white p-6 rounded-xl shadow-sm mb-8">
-        <h2 class="text-2xl font-bold text-slate-800 mb-5">Collaboration Settings</h2>
+       <h2 class="text-2xl font-bold text-slate-800 mb-5">Collaboration Settings</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
-            <div class="md:col-span-2">
-                <label for="supervisorEmail" class="block text-sm font-medium text-slate-600 mb-1">Supervisor's Email</label>
+            <div class="md:col-span-2"> <!-- Added div wrapper --><label for="supervisorEmail" class="block text-sm font-medium text-slate-600 mb-1">Supervisor's Email</label>
                 <input id="supervisorEmail" type="email" placeholder="supervisor@example.com" class="w-full p-2.5 border border-slate-300 rounded-md focus:ring-2 focus:ring-indigo-500 transition" />
             </div>
             <div>
-                <button id="sendEmailButton" class="w-full flex items-center justify-center gap-2 bg-green-600 text-white font-semibold p-2.5 rounded-md hover:bg-green-700 transition">
+                <button id="sendEmailButton" class="w-full flex items-center justify-center gap-2 bg-green-600 text-white font-semibold p-2.5 rounded-md hover:bg-green-700 transition h-[42px]">
                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                       <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
                       <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
@@ -142,6 +140,7 @@
             </div>
         </div>
       </div>
+
 
 
 
