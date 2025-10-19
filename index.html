@@ -25,114 +25,121 @@
     ></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/luxon/3.4.0/luxon.min.js"></script>
 
-    <style>
+
+  <style>
+      /* Apply Poppins font globally */
       body {
-        font-family: "Inter", sans-serif;
+        font-family: "Poppins", sans-serif;
       }
-      /* Custom focus ring color */
-      .focus\:ring-indigo-500:focus {
+      /* Custom focus ring color to match gold accent */
+      .focus\:ring-amber-500:focus {
         --tw-ring-opacity: 1;
-        --tw-ring-color: rgba(99, 102, 241, var(--tw-ring-opacity));
+        --tw-ring-color: rgba(245, 158, 11, var(--tw-ring-opacity));
         box-shadow: 0 0 0 2px var(--tw-ring-color);
       }
     </style>
   </head>
   <body class="bg-slate-100 text-slate-800">
-  <div id="auth-container" class="container mx-auto max-w-md p-4 sm:p-6 lg:p-8 mt-10">
-    <div class="bg-white p-8 rounded-xl shadow-md">
-      <h1 class="text-3xl font-bold text-center text-slate-900 mb-6">
-        ProdTrak Login
-      </h1>
-      <div class="space-y-4">
-        <div>
-          <label for="email" class="block text-sm font-medium text-slate-600 mb-1">Email</label>
-          <input id="email" type="email" placeholder="you@example.com"
-            class="w-full p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-indigo-500 transition" />
-        </div>
-        <div>
-          <label for="password" class="block text-sm font-medium text-slate-600 mb-1">Password</label>
-          <input id="password" type="password" placeholder="••••••••"
-            class="w-full p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-indigo-500 transition" />
-        </div>
-        <p id="auth-error" class="text-red-500 text-sm text-center"></p>
-        <div class="flex flex-col sm:flex-row gap-2">
-          <button id="loginButton"
-            class="w-full bg-indigo-600 text-white font-semibold p-3 rounded-md hover:bg-indigo-700 transition">
-            Login
-          </button>
-          <button id="signupButton"
-            class="w-full bg-slate-600 text-white font-semibold p-3 rounded-md hover:bg-slate-700 transition">
-            Sign Up
-          </button>
+
+ <!-- =================================== -->
+    <!--  1. AUTHENTICATION CONTAINER        -->
+    <!-- =================================== -->
+    <div id="auth-container" class="container mx-auto max-w-md p-4 sm:p-6 lg:p-8 mt-10">
+      <div class="bg-white p-8 border border-gray-200">
+        <h1 class="text-3xl font-bold text-center text-gray-900 mb-6">
+          ProdTrak Login
+        </h1>
+        <div class="space-y-4">
+          <div>
+            <label for="email" class="block text-sm font-medium text-gray-600 mb-1">Email</label>
+            <input id="email" type="email" placeholder="you@example.com"
+              class="w-full p-2 border border-gray-300 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition" />
+          </div>
+          <div>
+            <label for="password" class="block text-sm font-medium text-gray-600 mb-1">Password</label>
+            <input id="password" type="password" placeholder="••••••••"
+              class="w-full p-2 border border-gray-300 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition" />
+          </div>
+          <p id="auth-error" class="text-red-500 text-sm text-center h-4"></p>
+          <div class="flex flex-col sm:flex-row gap-2">
+            <button id="loginButton"
+              class="w-full bg-[#003366] text-white font-semibold p-3 hover:bg-[#002244] transition">
+              Login
+            </button>
+            <button id="signupButton"
+              class="w-full bg-gray-700 text-white font-semibold p-3 hover:bg-gray-800 transition">
+              Sign Up
+            </button>
+          </div>
         </div>
       </div>
     </div>
-  </div>
 
-   <!-- =================================== -->
-    <!--        WELCOME CONTAINER           -->
     <!-- =================================== -->
-     <div id="welcome-container" class="container mx-auto max-w-3xl p-4 sm:p-6 lg:p-8 hidden">
-        <div class="bg-white p-8 rounded-xl shadow-md text-center">
-            <div class="mx-auto flex items-center justify-center h-10 w-10 rounded-full bg-indigo-100 mb-5">
-                 <svg class="h-4 w-4 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+    <!--  2. WELCOME CONTAINER               -->
+    <!-- =================================== -->
+    <div id="welcome-container" class="container mx-auto max-w-3xl p-4 sm:p-6 lg:p-8 hidden">
+        <div class="bg-white p-8 border border-gray-200 text-center">
+            <div class="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-sky-100 mb-5">
+                 <svg class="h-7 w-7 text-[#003366]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
             </div>
-            <h1 class="text-4xl font-extrabold text-slate-900 mb-4">Welcome to ProdTrak!</h1>
-            <p class="text-slate-600 text-lg mb-8 max-w-xl mx-auto">
+            <h1 class="text-4xl font-bold text-gray-900 mb-4">Welcome to ProdTrak!</h1>
+            <p class="text-gray-600 text-lg mb-8 max-w-xl mx-auto">
                 Stay on top of your responsibilities, track progress, and seamlessly collaborate with your supervisor.
             </p>
             
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-left mb-10">
-                <div class="bg-slate-50 p-4 rounded-lg">
-                    <h3 class="font-bold text-slate-800">Organize Tasks</h3>
-                    <p class="text-sm text-slate-600">Easily add, manage, and categorize your daily tasks.</p>
+                <div class="bg-gray-50 p-4 border border-gray-200">
+                    <h3 class="font-bold text-gray-800">Organize Tasks</h3>
+                    <p class="text-sm text-gray-600">Easily add, manage, and categorize your daily tasks.</p>
                 </div>
-                 <div class="bg-slate-50 p-4 rounded-lg">
-                    <h3 class="font-bold text-slate-800">Track Progress</h3>
-                    <p class="text-sm text-slate-600">Use the dashboard to monitor your completion rates.</p>
+                 <div class="bg-gray-50 p-4 border border-gray-200">
+                    <h3 class="font-bold text-gray-800">Track Progress</h3>
+                    <p class="text-sm text-gray-600">Use the dashboard to monitor your completion rates.</p>
                 </div>
-                 <div class="bg-slate-50 p-4 rounded-lg">
-                    <h3 class="font-bold text-slate-800">Collaborate</h3>
-                    <p class="text-sm text-slate-600">Send professional daily reports to your supervisor.</p>
+                 <div class="bg-gray-50 p-4 border border-gray-200">
+                    <h3 class="font-bold text-gray-800">Collaborate</h3>
+                    <p class="text-sm text-gray-600">Send professional daily reports to your supervisor.</p>
                 </div>
             </div>
 
-            <button id="goToAppButton" class="bg-indigo-600 text-white font-semibold py-3 px-8 rounded-md hover:bg-indigo-700 transition text-lg">
+            <button id="goToAppButton" class="bg-[#003366] text-white font-semibold py-3 px-8 hover:bg-[#002244] transition text-lg">
                 Go to My Tasks
             </button>
         </div>
     </div>
 
-<!---=====================================-->
-<!-------     APP CONTAINER      ----------->
-<!---=====================================-->
-  <div id="app-container" class="container mx-auto max-w-5xl p-4 sm:p-6 lg:p-8 hidden">
-    <div class="flex justify-between items-center text-center mb-10">
-        <div></div> <div>
-            <h1 class="text-4xl sm:text-5xl font-extrabold text-slate-900 mb-2">
-                My Tasks
-            </h1>
-            <p class="text-slate-500">
-                Welcome, <span id="user-email" class="font-semibold"></span>!
-            </p>
-        </div>
-        <button id="logoutButton" class="bg-red-500 text-white font-semibold py-2 px-4 rounded-md hover:bg-red-600 transition">
-            Logout
-        </button>
-    </div>
+    <!-- =================================== -->
+    <!--  3. MAIN APP CONTAINER              -->
+    <!-- =================================== -->
+    <div id="app-container" class="container mx-auto max-w-5xl p-4 sm:p-6 lg:p-8 hidden">
+      <div class="flex justify-between items-center text-center mb-10">
+          <div></div>
+          <div>
+              <h1 class="text-4xl sm:text-5xl font-bold text-gray-900 mb-2">
+                  My Tasks
+              </h1>
+              <p class="text-gray-500">
+                  Welcome, <span id="user-email" class="font-semibold"></span>!
+              </p>
+          </div>
+          <button id="logoutButton" class="bg-red-600 text-white font-semibold py-2 px-4 hover:bg-red-700 transition">
+              Logout
+          </button>
+      </div>
 
-     <!--Email and Send Button -->
-      <div class="bg-white p-6 rounded-xl shadow-sm mb-8">
-        <h2 class="text-2xl font-bold text-slate-800 mb-5">Collaboration Settings</h2>
+      <!-- Collaboration Settings -->
+      <div class="bg-white p-6 border border-gray-200 mb-8">
+        <h2 class="text-2xl font-bold text-gray-800 mb-5">Collaboration Settings</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
             <div class="md:col-span-2">
-                <label for="supervisorEmail" class="block text-sm font-medium text-slate-600 mb-1">Supervisor's Email</label>
-                <input id="supervisorEmail" type="email" placeholder="supervisor@example.com" class="w-full p-2.5 border border-slate-300 rounded-md focus:ring-2 focus:ring-indigo-500 transition" />
+                <label for="supervisorEmail" class="block text-sm font-medium text-gray-600 mb-1">Supervisor's Email</label>
+                <input id="supervisorEmail" type="email" placeholder="supervisor@example.com" class="w-full p-2.5 border border-gray-300 focus:ring-2 focus:ring-amber-500 focus:border-amber-500 transition" />
             </div>
             <div>
-                <button id="sendEmailButton" class="w-full flex items-center justify-center gap-2 bg-green-600 text-white font-semibold p-2.5 rounded-md hover:bg-green-700 transition">
+                <button id="sendEmailButton" class="w-full flex items-center justify-center gap-2 bg-green-700 text-white font-semibold p-2.5 hover:bg-green-800 transition h-[46px]">
                      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                       <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
                       <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
@@ -143,153 +150,71 @@
         </div>
       </div>
 
-
-
-    <div class="bg-white p-6 rounded-xl shadow-sm mb-8">
-      <h2 class="text-2xl font-bold text-slate-800 mb-5">Add New Task</h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
+      <!-- Add New Task -->
+      <div class="bg-white p-6 border border-gray-200 mb-8">
+        <h2 class="text-2xl font-bold text-gray-800 mb-5">Add New Task</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
           <div class="md:col-span-2">
-            <label
-              for="taskTitle"
-              class="block text-sm font-medium text-slate-600 mb-1"
-              >Title</label
-            >
-            <input
-              id="taskTitle"
-              type="text"
-              placeholder="e.g., Finalize quarterly report"
-              class="w-full p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
-            />
+            <label for="taskTitle" class="block text-sm font-medium text-gray-600 mb-1">Title</label>
+            <input id="taskTitle" type="text" placeholder="e.g., Finalize quarterly report" class="w-full p-2 border border-gray-300 focus:ring-2 focus:ring-amber-500 transition"/>
           </div>
           <div class="md:col-span-2">
-            <label
-              for="taskDescription"
-              class="block text-sm font-medium text-slate-600 mb-1"
-              >Description</label
-            >
-            <textarea
-              id="taskDescription"
-              placeholder="Add more details about the task..."
-              class="w-full p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
-              rows="3"
-            ></textarea>
+            <label for="taskDescription" class="block text-sm font-medium text-gray-600 mb-1">Description</label>
+            <textarea id="taskDescription" placeholder="Add more details about the task..." class="w-full p-2 border border-gray-300 focus:ring-2 focus:ring-amber-500 transition" rows="3"></textarea>
           </div>
           <div>
-            <label
-              for="taskDeliverable"
-              class="block text-sm font-medium text-slate-600 mb-1"
-              >Deliverable</label
-            >
-            <input
-              id="taskDeliverable"
-              type="text"
-              placeholder="e.g., PDF Report"
-              class="w-full p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
-            />
+            <label for="taskDeliverable" class="block text-sm font-medium text-gray-600 mb-1">Deliverable</label>
+            <input id="taskDeliverable" type="text" placeholder="e.g., PDF Report" class="w-full p-2 border border-gray-300 focus:ring-2 focus:ring-amber-500 transition"/>
           </div>
           <div>
-            <label
-              for="taskDueDate"
-              class="block text-sm font-medium text-slate-600 mb-1"
-              >Due Date</label
-            >
-            <input
-              id="taskDueDate"
-              type="datetime-local"
-              class="w-full p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
-            />
+            <label for="taskDueDate" class="block text-sm font-medium text-gray-600 mb-1">Due Date</label>
+            <input id="taskDueDate" type="datetime-local" class="w-full p-2 border border-gray-300 focus:ring-2 focus:ring-amber-500 transition"/>
           </div>
           <div>
-            <label
-              for="taskPriority"
-              class="block text-sm font-medium text-slate-600 mb-1"
-              >Priority</label
-            >
-            <select
-              id="taskPriority"
-              class="w-full p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
-            >
+            <label for="taskPriority" class="block text-sm font-medium text-gray-600 mb-1">Priority</label>
+            <select id="taskPriority" class="w-full p-2 border border-gray-300 focus:ring-2 focus:ring-amber-500 transition">
               <option value="Low">Low</option>
               <option value="Medium">Medium</option>
               <option value="High">High</option>
             </select>
           </div>
           <div>
-            <label
-              for="taskCategory"
-              class="block text-sm font-medium text-slate-600 mb-1"
-              >Category</label
-            >
-            <select
-              id="taskCategory"
-              class="w-full p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
-            >
+            <label for="taskCategory" class="block text-sm font-medium text-gray-600 mb-1">Category</label>
+            <select id="taskCategory" class="w-full p-2 border border-gray-300 focus:ring-2 focus:ring-amber-500 transition">
               <option value="Work">Work</option>
               <option value="Personal">Personal</option>
               <option value="Study">Study</option>
             </select>
           </div>
           <div class="md:col-span-2">
-            <label
-              for="taskAssignedBy"
-              class="block text-sm font-medium text-slate-600 mb-1"
-              >Assigned By</label
-            >
-            <input
-              id="taskAssignedBy"
-              type="text"
-              placeholder="e.g., Joseph"
-              class="w-full p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
-            />
+            <label for="taskAssignedBy" class="block text-sm font-medium text-gray-600 mb-1">Assigned By</label>
+            <input id="taskAssignedBy" type="text" placeholder="e.g., Joseph" class="w-full p-2 border border-gray-300 focus:ring-2 focus:ring-amber-500 transition"/>
           </div>
           <div class="md:col-span-2">
-            <button
-              onclick="addTask()"
-              class="w-full bg-indigo-600 text-white font-semibold p-3 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors duration-200"
-            >
+            <button onclick="addTask()" class="w-full bg-[#003366] text-white font-semibold p-3 hover:bg-[#002244] transition">
               Add Task
             </button>
           </div>
         </div>
-    </div>
-    <div class="mb-8">
-      <h2 class="text-2xl font-bold text-slate-800 mb-4">
-        Progress Dashboard
-      </h2>
-      <div
-        id="dashboard"
-        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4"
-      >
-        <div class="bg-white p-5 rounded-xl shadow-sm">
-          <h3 class="text-sm font-medium text-slate-500">Total Tasks</h3>
-          <p id="totalTasks" class="text-3xl font-bold text-slate-900">0</p>
-        </div>
-        <div class="bg-white p-5 rounded-xl shadow-sm">
-          <h3 class="text-sm font-medium text-slate-500">In Progress</h3>
-          <p id="inProgressTasks" class="text-3xl font-bold text-slate-900">
-            0
-          </p>
-        </div>
-        <div class="bg-white p-5 rounded-xl shadow-sm">
-          <h3 class="text-sm font-medium text-slate-500">Completed</h3>
-          <p id="completedTasks" class="text-3xl font-bold text-slate-900">
-            0
-          </p>
-        </div>
-        <div class="bg-white p-5 rounded-xl shadow-sm">
-          <h3 class="text-sm font-medium text-slate-500">Completion Rate</h3>
-          <p id="completionRate" class="text-3xl font-bold text-slate-900">
-            0%
-          </p>
+      </div>
+      
+      <!-- Progress Dashboard -->
+      <div class="mb-8">
+        <h2 class="text-2xl font-bold text-gray-800 mb-4">Progress Dashboard</h2>
+        <div id="dashboard" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="bg-white p-5 border border-gray-200"><h3 class="text-sm font-medium text-gray-500">Total Tasks</h3><p id="totalTasks" class="text-3xl font-bold text-gray-900">0</p></div>
+          <div class="bg-white p-5 border border-gray-200"><h3 class="text-sm font-medium text-gray-500">In Progress</h3><p id="inProgressTasks" class="text-3xl font-bold text-gray-900">0</p></div>
+          <div class="bg-white p-5 border border-gray-200"><h3 class="text-sm font-medium text-gray-500">Completed</h3><p id="completedTasks" class="text-3xl font-bold text-gray-900">0</p></div>
+          <div class="bg-white p-5 border border-gray-200"><h3 class="text-sm font-medium text-gray-500">Completion Rate</h3><p id="completionRate" class="text-3xl font-bold text-gray-900">0%</p></div>
         </div>
       </div>
+      
+      <!-- Task List -->
+      <div class="bg-white p-6 border border-gray-200">
+        <h2 class="text-2xl font-bold text-gray-800 mb-4">My Task List</h2>
+        <div id="taskList" class="space-y-4"></div>
+      </div>
     </div>
-    <div class="bg-white p-6 rounded-xl shadow-sm">
-      <h2 class="text-2xl font-bold text-slate-800 mb-4">My Task List</h2>
-      <div id="taskList" class="space-y-4"></div>
-    </div>
-  </div>
-</body>
 
 
     <script type="module">

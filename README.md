@@ -1,5 +1,6 @@
 ProdTrak - Productivity & Task Tracking ApplicationProdTrak is a modern, single-page web application designed to help users manage their daily tasks, monitor their productivity, and facilitate seamless collaboration with supervisors through automated email reports. Built with a focus on operational excellence, it provides a clean, responsive interface for efficient task management.
-✨ FeaturesSecure User Authentication: Users can sign up and log in using their email and password. All tasks are private and linked to the user's account.
+✨ Features
+Secure User Authentication: Users can sign up and log in using their email and password. All tasks are private and linked to the user's account.
 Comprehensive Task Management: Create, update, and delete tasks with detailed properties including:
 Title & Description
 Priority Level (High, Medium, Low)
