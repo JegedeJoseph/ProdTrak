@@ -44,23 +44,6 @@
         To-Do App Login
       </h1>
       <div class="space-y-4">
-         <div>
-        <button id="googleLoginButton"
-          class="w-full flex items-center justify-center gap-2 bg-white border border-slate-300 text-slate-700 font-semibold p-3 rounded-md hover:bg-slate-50 transition">
-          <svg class="w-5 h-5" viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.611 20.083H42V20H24v8h11.303c-1.649 4.657-6.08 8-11.303 8c-6.627 0-12-5.373-12-12s5.373-12 12-12c3.059 0 5.842 1.154 7.961 3.039l5.657-5.657C34.046 6.053 29.268 4 24 4C12.955 4 4 12.955 4 24s8.955 20 20 20s20-8.955 20-20c0-1.341-.138-2.65-.389-3.917z"></path><path fill="#FF3D00" d="M6.306 14.691c-1.313 2.525-2.074 5.433-2.074 8.529c0 3.096.761 6.004 2.074 8.529l-5.657 5.657C.623 34.046 0 29.268 0 24c0-5.268.623-10.046 2.649-14.341l5.657 5.032z"></path><path fill="#4CAF50" d="M24 48c5.268 0 10.046-.623 14.341-2.649l-5.657-5.657C30.413 41.205 27.426 42 24 42c-4.715 0-8.892-2.12-11.458-5.322l-5.657 5.657C10.032 45.368 16.689 48 24 48z"></path><path fill="#1976D2" d="M43.611 20.083H42V20H24v8h11.303c-.792 2.237-2.231 4.16-4.082 5.574l5.657 5.657C39.997 35.96 44 30.605 44 24c0-1.341-.138-2.65-.389-3.917z"></path></svg>
-          Sign in with Google
-        </button>
-      </div>
-
-      <div class="relative">
-        <div class="absolute inset-0 flex items-center">
-          <div class="w-full border-t border-slate-300"></div>
-        </div>
-        <div class="relative flex justify-center text-sm">
-          <span class="bg-white px-2 text-slate-500">Or continue with</span>
-        </div>
-      </div>
-
         <div>
           <label for="email" class="block text-sm font-medium text-slate-600 mb-1">Email</label>
           <input id="email" type="email" placeholder="you@example.com"
@@ -86,6 +69,21 @@
     </div>
   </div>
 
+   <!-- =================================== -->
+    <!--  2. NEW WELCOME CONTAINER           -->
+    <!-- =================================== -->
+    <div id="welcome-container" class="container mx-auto max-w-3xl p-4 sm:p-6 lg:p-8 text-center hidden">
+        <div class="bg-white p-8 rounded-xl shadow-md">
+            <h1 class="text-4xl font-extrabold text-slate-900 mb-4">Welcome to Your To-Do App!</h1>
+            <p class="text-slate-600 text-lg mb-6">
+                This application helps you organize your daily tasks, track your progress, and maintain operational excellence. Stay on top of your responsibilities and collaborate seamlessly with your supervisor.
+            </p>
+            <button id="goToAppButton" class="bg-indigo-600 text-white font-semibold py-3 px-8 rounded-md hover:bg-indigo-700 transition text-lg">
+                Go to My Tasks
+            </button>
+        </div>
+    </div>
+
   <div id="app-container" class="container mx-auto max-w-5xl p-4 sm:p-6 lg:p-8 hidden">
     <div class="flex justify-between items-center text-center mb-10">
         <div></div> <div>
@@ -100,6 +98,23 @@
             Logout
         </button>
     </div>
+
+     <!--Email and Send Button -->
+      <div class="bg-white p-6 rounded-xl shadow-sm mb-8">
+        <h2 class="text-2xl font-bold text-slate-800 mb-5">Collaboration Settings</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+            <div class="md:col-span-2">
+                <label for="supervisorEmail" class="block text-sm font-medium text-slate-600 mb-1">Supervisor's Email</label>
+                <input id="supervisorEmail" type="email" placeholder="supervisor@example.com" class="w-full p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-indigo-500 transition" />
+            </div>
+            <div>
+                <button id="sendEmailButton" class="w-full bg-green-600 text-white font-semibold p-2 rounded-md hover:bg-green-700 transition">
+                    Send Daily Tasks
+                </button>
+            </div>
+        </div>
+      </div>
+
 
     <div class="bg-white p-6 rounded-xl shadow-sm mb-8">
       <h2 class="text-2xl font-bold text-slate-800 mb-5">Add New Task</h2>
@@ -256,7 +271,7 @@
                 signInWithEmailAndPassword,
                 signOut,
                 onAuthStateChanged,
-                GoogleAuthProvider,   // <-- Import GoogleAuthProvider
+                //GoogleAuthProvider,   // <-- Import GoogleAuthProvider
                 signInWithRedirect, 
                 getRedirectResult,   // <-- Import getRedirectResult (for Google redirect flow)
               } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
@@ -293,51 +308,41 @@
 
              // --- UI Element References ---
   const authContainer = document.getElementById("auth-container");
+  const welcomeContainer = document.getElementById('welcome-container');
   const appContainer = document.getElementById("app-container");
+  const goToAppButton = document.getElementById('goToAppButton');
   const loginButton = document.getElementById("loginButton");
   const signupButton = document.getElementById("signupButton");
   const logoutButton = document.getElementById("logoutButton");
-  const googleLoginButton = document.getElementById('googleLoginButton');
   const userEmailSpan = document.getElementById("user-email");
   const authError = document.getElementById("auth-error");
-
-  // Handle redirect result once at startup
-getRedirectResult(auth).then((result) => {
-  if (result && result.user) {
-    console.log("Google sign-in result:", result.user);
-  }
-}).catch((error) => {
-  console.error("Error with Google redirect:", error);
-});
+  const sendEmailButton = document.getElementById('sendEmailButton');
 
   // --- Primary Auth State Observer & Redirect Handler ---
   onAuthStateChanged(auth, async (user) => {
     if (user) {
       console.log("User is logged in:", user);
       authContainer.classList.add("hidden");
-      appContainer.classList.remove("hidden");
+      welcomeContainer.classList.remove('hidden');
+      appContainer.classList.add("hidden");
       userEmailSpan.textContent = user.email || user.displayName;
       setupRealtimeListener(user);
     } else {
       console.log("User is signed out");
       authContainer.classList.remove("hidden");
+      welcomeContainer.classList.add('hidden');
       appContainer.classList.add("hidden");
       document.getElementById("taskList").innerHTML = "";
     }
   });
 
-  // --- Google Sign-In Event Listener ---
-  googleLoginButton.addEventListener('click', async () => {
-    authError.textContent = '';
-    try {
-      await signInWithRedirect(auth, googleProvider);
-    } catch (error) {
-      authError.textContent = error.message;
-      console.error('Error with Google sign-in:', error);
-    }
-  });
-
+  
   // --- Other Auth Event Listeners ---
+      goToAppButton.addEventListener('click', () => {
+          welcomeContainer.classList.add('hidden');
+          appContainer.classList.remove('hidden');
+      });
+
   signupButton.addEventListener("click", async () => {
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
@@ -376,6 +381,53 @@ getRedirectResult(auth).then((result) => {
   });
 
   Notification.requestPermission();
+
+  
+      // --- Email Sending Functionality ---
+      sendEmailButton.addEventListener('click', async () => {
+        const user = auth.currentUser;
+        if (!user) {
+            alert("You must be logged in.");
+            return;
+        }
+
+        const supervisorEmail = document.getElementById('supervisorEmail').value;
+        if (!supervisorEmail) {
+            alert("Please enter your supervisor's email address.");
+            return;
+        }
+
+        // Fetch user's tasks
+        const q = query(
+            collection(db, "tasks"),
+            where("userId", "==", user.uid),
+            orderBy("createdAt", "desc")
+        );
+        const snapshot = await getDocs(q);
+
+        if (snapshot.empty) {
+            alert("You have no tasks to send.");
+            return;
+        }
+
+        // Format tasks for the email body
+        let emailBody = "Hello,\n\nHere is my task summary for today:\n\n";
+        snapshot.forEach(doc => {
+            const task = doc.data();
+            const dueDate = luxon.DateTime.fromISO(task.dueDate).toLocaleString(luxon.DateTime.DATETIME_SHORT);
+            emailBody += `• Task: ${task.title}\n`;
+            emailBody += `  Status: ${task.status}\n`;
+            emailBody += `  Due: ${dueDate}\n\n`;
+        });
+        emailBody += "Thank you.";
+
+        // Create and trigger mailto link
+        const subject = `Task Summary from ${user.email}`;
+        const mailtoLink = `mailto:${supervisorEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody)}`;
+        
+        window.location.href = mailtoLink;
+      });
+
   
   // --- All Task and Dashboard Functions are outside of the event listeners ---
   
