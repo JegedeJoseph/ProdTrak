@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Operational Excellence To-Do App</title>
+    <title>ProdTrak - Your Productivity Tracker</title>
     <link rel="icon" type="image/png" href="/opex_favicon.png" />
 
     <link href="/dist/output.css" rel="stylesheet" />
@@ -41,7 +41,7 @@
   <div id="auth-container" class="container mx-auto max-w-md p-4 sm:p-6 lg:p-8 mt-10">
     <div class="bg-white p-8 rounded-xl shadow-md">
       <h1 class="text-3xl font-bold text-center text-slate-900 mb-6">
-        To-Do App Login
+        ProdTrak Login
       </h1>
       <div class="space-y-4">
         <div>
@@ -72,18 +72,42 @@
    <!-- =================================== -->
     <!--  2. NEW WELCOME CONTAINER           -->
     <!-- =================================== -->
-    <div id="welcome-container" class="container mx-auto max-w-3xl p-4 sm:p-6 lg:p-8 text-center hidden">
-        <div class="bg-white p-8 rounded-xl shadow-md">
-            <h1 class="text-4xl font-extrabold text-slate-900 mb-4">Welcome to Your To-Do App!</h1>
-            <p class="text-slate-600 text-lg mb-6">
-                This application helps you organize your daily tasks, track your progress, and maintain operational excellence. Stay on top of your responsibilities and collaborate seamlessly with your supervisor.
+     <div id="welcome-container" class="container mx-auto max-w-3xl p-4 sm:p-6 lg:p-8 hidden">
+        <div class="bg-white p-8 rounded-xl shadow-md text-center">
+            <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-indigo-100 mb-5">
+                 <svg class="h-8 w-8 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </div>
+            <h1 class="text-4xl font-extrabold text-slate-900 mb-4">Welcome to ProdTrak!</h1>
+            <p class="text-slate-600 text-lg mb-8 max-w-xl mx-auto">
+                Stay on top of your responsibilities, track progress, and seamlessly collaborate with your supervisor.
             </p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-left mb-10">
+                <div class="bg-slate-50 p-4 rounded-lg">
+                    <h3 class="font-bold text-slate-800">Organize Tasks</h3>
+                    <p class="text-sm text-slate-600">Easily add, manage, and categorize your daily tasks.</p>
+                </div>
+                 <div class="bg-slate-50 p-4 rounded-lg">
+                    <h3 class="font-bold text-slate-800">Track Progress</h3>
+                    <p class="text-sm text-slate-600">Use the dashboard to monitor your completion rates.</p>
+                </div>
+                 <div class="bg-slate-50 p-4 rounded-lg">
+                    <h3 class="font-bold text-slate-800">Collaborate</h3>
+                    <p class="text-sm text-slate-600">Send professional daily reports to your supervisor.</p>
+                </div>
+            </div>
+
             <button id="goToAppButton" class="bg-indigo-600 text-white font-semibold py-3 px-8 rounded-md hover:bg-indigo-700 transition text-lg">
                 Go to My Tasks
             </button>
         </div>
     </div>
 
+<!---=====================================-->
+<!-------     APP CONTAINER      ----------->
+<!---=====================================-->
   <div id="app-container" class="container mx-auto max-w-5xl p-4 sm:p-6 lg:p-8 hidden">
     <div class="flex justify-between items-center text-center mb-10">
         <div></div> <div>
@@ -105,15 +129,20 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
             <div class="md:col-span-2">
                 <label for="supervisorEmail" class="block text-sm font-medium text-slate-600 mb-1">Supervisor's Email</label>
-                <input id="supervisorEmail" type="email" placeholder="supervisor@example.com" class="w-full p-2 border border-slate-300 rounded-md focus:ring-2 focus:ring-indigo-500 transition" />
+                <input id="supervisorEmail" type="email" placeholder="supervisor@example.com" class="w-full p-2.5 border border-slate-300 rounded-md focus:ring-2 focus:ring-indigo-500 transition" />
             </div>
             <div>
-                <button id="sendEmailButton" class="w-full bg-green-600 text-white font-semibold p-2 rounded-md hover:bg-green-700 transition">
-                    Send Daily Tasks
+                <button id="sendEmailButton" class="w-full flex items-center justify-center gap-2 bg-green-600 text-white font-semibold p-2.5 rounded-md hover:bg-green-700 transition">
+                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                      <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                      <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                    </svg>
+                    <span>Send Report</span>
                 </button>
             </div>
         </div>
       </div>
+
 
 
     <div class="bg-white p-6 rounded-xl shadow-sm mb-8">
@@ -272,9 +301,7 @@
                 signOut,
                 onAuthStateChanged,
                 //GoogleAuthProvider,   // <-- Import GoogleAuthProvider
-                signInWithRedirect, 
-                getRedirectResult,   // <-- Import getRedirectResult (for Google redirect flow)
-              } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+                } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
               import {
                 getFirestore,
                 collection,
@@ -410,23 +437,55 @@
             return;
         }
 
-        // Format tasks for the email body
-        let emailBody = "Hello,\n\nHere is my task summary for today:\n\n";
+        // 1. Categorize tasks by status
+        const tasksByStatus = {
+            'In Progress': [],
+            'Not Started': [],
+            'Completed': []
+        };
+
         snapshot.forEach(doc => {
             const task = doc.data();
-            const dueDate = luxon.DateTime.fromISO(task.dueDate).toLocaleString(luxon.DateTime.DATETIME_SHORT);
-            emailBody += `• Task: ${task.title}\n`;
-            emailBody += `  Status: ${task.status}\n`;
-            emailBody += `  Due: ${dueDate}\n\n`;
+            if (tasksByStatus[task.status]) {
+                tasksByStatus[task.status].push(task);
+            }
         });
-        emailBody += "Thank you.";
 
-        // Create and trigger mailto link
-        const subject = `Task Summary from ${user.email}`;
+        const today = luxon.DateTime.now().toLocaleString(luxon.DateTime.DATE_FULL);
+
+        // 2. Build the professional email body
+        let emailBody = `Dear Supervisor,\n\nPlease find my task report for today, ${today}.\n\n`;
+
+        const buildTaskSection = (title, tasks) => {
+            if (tasks.length === 0) return "";
+            
+            let section = `--- ${title.toUpperCase()} ---\n\n`;
+            tasks.forEach(task => {
+                const dueDate = luxon.DateTime.fromISO(task.dueDate).toLocaleString(luxon.DateTime.DATETIME_SHORT);
+                section += `• Task: ${task.title}\n`;
+                section += `  - Priority: ${task.priority}\n`;
+                section += `  - Due: ${dueDate}\n`;
+                if (task.deliverable) {
+                    section += `  - Deliverable: ${task.deliverable}\n`;
+                }
+                section += `\n`;
+            });
+            return section;
+        };
+
+        emailBody += buildTaskSection('In Progress', tasksByStatus['In Progress']);
+        emailBody += buildTaskSection('Not Started', tasksByStatus['Not Started']);
+        emailBody += buildTaskSection('Completed', tasksByStatus['Completed']);
+
+        emailBody += "Thank you.\n\nBest regards,\n" + user.email;
+
+        // 3. Create and trigger mailto link
+        const subject = `Daily Task Report for ${today} - ${user.email}`;
         const mailtoLink = `mailto:${supervisorEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(emailBody)}`;
         
         window.location.href = mailtoLink;
       });
+
 
   
   // --- All Task and Dashboard Functions are outside of the event listeners ---
